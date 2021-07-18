@@ -1,0 +1,28 @@
+Update – v.3.1.2
+    Fixed:
+       - Compatibility with WP 5.7
+       - Compatibility with PHP 8.0
+       - RevSlider update
+
+Update – v.3.1.1
+    Fixed:
+       - Compatibility Plugin Twenty20
+
+Update – v.3.1.0
+    Added:
+        - New Home Page( Handyman )
+        - New Plugin Twenty20
+    Changed:
+        - Update demo data
+    Fixed:
+        - Compatibility with WP 5.5
+        - Update plugins to their latest versions
+        - Improve theme styles
+
+Update – v.3.0.1
+    Fix
+        -Themerex Addons vulnarability fixed
+
+
+Release – v.3.0 (1.0.58.2)
+    - Plugin TRX Addons has been modified.

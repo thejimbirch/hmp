@@ -1,0 +1,88 @@
+/* Essential Grid styles
+----------------------------------------------------------------- */
+.esg-navigationbutton i[class*="eg-icon-"] {
+  color: #888;
+}
+
+.esg-navigationbutton:hover i[class*="eg-icon-"] {
+  color: #333;
+}
+
+.esg-entry-cover .eec > div {
+  margin-right: 0 !important;
+}
+
+.esg-entry-cover .eec > div[class*="-element-1-a"] {
+  margin-left: 10px !important;
+}
+
+.esg-entry-media {
+  height: 100%;
+}
+
+.esg-starring {
+  vertical-align: top;
+}
+
+.esg-starring .star-rating, .esg-starring-page .star-rating {
+  width: 6em;
+}
+
+.flat-light .esg-filters .esg-sortbutton-order,
+.flat-light .esg-filters .esg-cartbutton-order {
+  line-height: 36px;
+  margin: 0;
+}
+
+.flat-light .esg-filters .esg-sortbutton {
+  padding-right: 0;
+}
+
+.esgbox-overlay {
+  z-index: 228010 !important;
+}
+
+.esgbox-opened {
+  z-index: 228030 !important;
+}
+
+.wp-widget-ess-grid-widget ul > li:before {
+  display: none !important;
+}
+
+div.esg-filter-wrapper .esg-filterbutton > span {
+  font-size: 18px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+div.esg-filter-wrapper .esg-filterbutton.selected > span {
+  font-weight: 700;
+}
+
+div.esg-filter-wrapper {
+  margin-bottom: 1rem;
+}
+
+.esg-pagination {
+  margin-top: 3.0714285714rem;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.esg-filters div.esg-navigationbutton {
+  line-height: normal;
+  width: 2.5714285714rem;
+  height: 2.5714285714rem;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1428571429rem;
+}
+
+.esgbox-button.esgbox-button--share {
+  display: none;
+}
+
+/*# sourceMappingURL=essential-grid.css.map */
