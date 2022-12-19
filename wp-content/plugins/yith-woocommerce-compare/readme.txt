@@ -2,14 +2,14 @@
 
 Contributors: yithemes
 Tags: yith, woocommerce compare, compare products, product compare, product comparison
-Requires at least: 5.6
-Tested up to: 5.8
-Stable tag: 2.5.3
+Requires at least: 5.7
+Tested up to: 6.1
+Stable tag: 2.21.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 YITH WooCommerce Compare allows you to compare more products of your shop in one complete table.
-WooCommerce Compatible up to 5.5
+WooCommerce Compatible up to 6.9
 
 == Description ==
 
@@ -66,6 +66,110 @@ yith-woocommerce-compare-<WORDPRESS LOCALE >.mo
 
 == Changelog ==
 
+= 2.21.0 = Released on 13 December 2022
+
+* New: support for WooCommerce 7.2
+* Update: YITH plugin framework
+
+= 2.20.1 = Released on 14 November 2022
+
+* Update: YITH plugin framework
+* Fix: patched security vulnerability
+
+= 2.20.0 = Released on 27 October 2022
+
+* New: support for WooCommerce 7.1
+* New: support for WordPress 6.1
+* Update: YITH plugin framework
+
+= 2.19.0 = Released on 07 October 2022
+
+* New: support for WooCommerce 7.0
+* Update: YITH plugin framework
+
+= 2.18.0 = Released on 31 August 2022
+
+* New: support for WooCommerce 6.9
+* Update: YITH plugin framework
+
+= 2.17.0 = Released on 29 July 2022
+
+* New: support for WooCommerce 6.8
+* Update: YITH plugin framework
+
+= 2.16.0 = Released on 14 July 2022
+
+* New: support for WooCommerce 6.7
+* Update: YITH plugin framework
+
+= 2.15.0 = Released on 23 June 2022
+
+* New: support for WooCommerce 6.6
+* Update: YITH plugin framework
+
+= 2.14.0 = Released on 17 May 2022
+
+* New: support for WooCommerce 6.5
+* New: support for WordPress 6.0
+* Update: YITH plugin framework
+
+= 2.13.0 = Released on 11 April 2022
+
+* New: support for WooCommerce 6.4
+* Update: YITH plugin framework
+
+= 2.12.0 = Released on 09 March 2022
+
+* New: support for WooCommerce 6.3
+* Update: YITH plugin framework
+
+= 2.11.0 = Released on 15 February 2022
+
+* New: support for WooCommerce 6.2
+* Update: YITH plugin framework
+
+= 2.10.0 = Released on 17 January 2022
+
+* New: support for WooCommerce 6.1
+* New: support for WordPress 5.9
+* Update: YITH plugin framework
+
+= 2.9.0 = Released on 20 December 2021
+
+* New: support for WooCommerce 6.0
+* Update: YITH plugin framework
+
+= 2.8.0 = Released on 11 November 2021
+
+* New: support for WooCommerce 5.9
+* Update: YITH plugin framework
+
+= 2.7.0 = Released on 15 October 2021
+
+* New: support for WooCommerce 5.8
+* Update: YITH plugin framework
+
+= 2.6.1 = Released on 27 September 2021
+
+* Update: YITH plugin framework
+* Fix: debug info feature removed for all logged in users
+
+= 2.6.0 = Released on 09 September 2021
+
+* New: support for WooCommerce 5.7
+* Update: YITH plugin framework
+* Fix: compare button preview on Elementor editor
+
+= 2.5.4.1 = Released on 24 August 2021
+
+* Fix: fatal error "Call to undefined method YITH_Woocompare_Admin::list_products_html()"
+* Update: YITH plugin framework
+
+= 2.5.4 = Released on 13 August 2021
+
+* New: support for WooCommerce 5.6
+* Update: YITH plugin framework
+
 = 2.5.3 = Released on 14 July 2021
 
 * New: support for WooCommerce 5.5
@@ -73,7 +177,7 @@ yith-woocommerce-compare-<WORDPRESS LOCALE >.mo
 * Update: YITH plugin framework
 
 
-= 2.5.2 = Released on 01 Jun 2021
+= 2.5.2 = Released on 01 June 2021
 
 * New: support for WooCommerce 5.4
 * Update: YITH plugin framework
@@ -468,7 +572,7 @@ Full documentation is available [here](https://docs.yithemes.com/yith-woocommerc
 
 == Upgrade notice ==
 
-= 2.5.2 = Released on 01 Jun 2021
+= 2.6.1 = Released on 27 Sep 2021
 
-* New: support for WooCommerce 5.4
 * Update: YITH plugin framework
+* Fix: debug info feature removed for all logged in users

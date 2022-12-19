@@ -85,7 +85,7 @@ var booked_load_calendar_date_booking_options,
 
 		$('.booked-calendar-wrap').each(function(){
 			var thisCalendar = $(this);
-			var calendar_month = thisCalendar.find('table.booked-calendar').attr('data-calendar-date');
+			var calendar_month = thisCalendar.find('div.booked-calendar').attr('data-calendar-date');
 			thisCalendar.attr('data-default',calendar_month);
 			init_tooltips(thisCalendar);
 		});
@@ -186,7 +186,7 @@ var booked_load_calendar_date_booking_options,
 				gotoMonth			= $button.attr('data-goto'),
 				thisCalendarWrap 	= $button.parents('.booked-calendar-wrap'),
 				thisCalendarDefault = thisCalendarWrap.attr('data-default'),
-				calendar_id			= $button.parents('table.booked-calendar').attr('data-calendar-id');
+				calendar_id			= $button.parents('div.booked-calendar').attr('data-calendar-id');
 
 			if (typeof thisCalendarDefault == 'undefined'){ thisCalendarDefault = false; }
 
@@ -220,16 +220,16 @@ var booked_load_calendar_date_booking_options,
 		});
 
 		// Calendar Date Click
-		$('body').on('click', '.booked-calendar-wrap tr.week td', function(e) {
+		$('body').on('click', '.booked-calendar-wrap .bc-row.week .bc-col', function(e) {
 
 			e.preventDefault();
 
 			var $thisDate 				= $(this),
-				booked_calendar_table 	= $thisDate.parents('table.booked-calendar'),
+				booked_calendar_table 	= $thisDate.parents('div.booked-calendar'),
 				$thisRow				= $thisDate.parent(),
 				date					= $thisDate.attr('data-date'),
 				calendar_id				= booked_calendar_table.attr('data-calendar-id'),
-				colspanSetting			= $thisRow.find('td').length;
+				colspanSetting			= $thisRow.find('.bc-col').length;
 
 			if (!calendar_id){ calendar_id = 0; }
 
@@ -240,19 +240,19 @@ var booked_load_calendar_date_booking_options,
 			} else if ($thisDate.hasClass('active')){
 
 				$thisDate.removeClass('active');
-				$('tr.entryBlock').remove();
+				$('.bc-row.entryBlock').remove();
 
 				var calendarHeight = booked_calendar_table.height();
 				booked_calendar_table.parent().height(calendarHeight);
 
 			} else {
 
-				$('tr.week td').removeClass('active');
+				$('.bc-row.week .bc-col').removeClass('active');
 				$thisDate.addClass('active');
 
-				$('tr.entryBlock').remove();
-				$thisRow.after('<tr class="entryBlock booked-loading"><td colspan="'+colspanSetting+'"></td></tr>');
-				$('tr.entryBlock').find('td').spin('booked');
+				$('.bc-row.entryBlock').remove();
+				$thisRow.after('<div class="bc-row entryBlock booked-loading"><div class="bc-col"></div></div>');
+				$('.bc-row.entryBlock').find('.bc-col').spin('booked');
 
 				booked_load_calendar_date_booking_options = {'action':'booked_calendar_date','date':date,'calendar_id':calendar_id};
 				$(document).trigger("booked-before-loading-calendar-booking-options");
@@ -266,11 +266,11 @@ var booked_load_calendar_date_booking_options,
 					data: booked_load_calendar_date_booking_options,
 					success: function( html ) {
 
-						$('tr.entryBlock').find('td').html( html );
+						$('.bc-row.entryBlock').find('.bc-col').html( html );
 
-						$('tr.entryBlock').removeClass('booked-loading');
-						$('tr.entryBlock').find('.booked-appt-list').fadeIn(300);
-						$('tr.entryBlock').find('.booked-appt-list').addClass('shown');
+						$('.bc-row.entryBlock').removeClass('booked-loading');
+						$('.bc-row.entryBlock').find('.booked-appt-list').fadeIn(300);
+						$('.bc-row.entryBlock').find('.booked-appt-list').addClass('shown');
 						adjust_calendar_boxes();
 
 					}
@@ -344,7 +344,7 @@ var booked_load_calendar_date_booking_options,
 			if (typeof is_list_view != 'undefined' && is_list_view){
 				var new_calendar_id	= $button.parents('.booked-list-view').find('.booked-list-view-nav').attr('data-calendar-id');
 			} else {
-				var new_calendar_id	= $button.parents('table.booked-calendar').attr('data-calendar-id');
+				var new_calendar_id	= $button.parents('div.booked-calendar').attr('data-calendar-id');
 			}
 			calendar_id = new_calendar_id ? new_calendar_id : calendar_id;
 
@@ -553,7 +553,7 @@ var booked_load_calendar_date_booking_options,
 	    $('body').on('submit','form#ajaxlogin', function(e){
 		    e.preventDefault();
 
-	        $('form#ajaxlogin p.status').show().html('<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
+	        $('form#ajaxlogin p.status').show().html('<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
 	        resize_booked_modal();
 
 	        var $this = $(this),
@@ -580,7 +580,7 @@ var booked_load_calendar_date_booking_options,
 						$button.detach();
 
 					} else {
-						$('form#ajaxlogin p.status').show().html('<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_wrong_username_pass);
+						$('form#ajaxlogin p.status').show().html('<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_wrong_username_pass);
 						resize_booked_modal();
 					}
 	            }
@@ -613,7 +613,7 @@ var booked_load_calendar_date_booking_options,
 	    $('body').on('submit','form#ajaxforgot', function(e){
 		    e.preventDefault();
 
-	        $('form#ajaxforgot p.status').show().html('<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
+	        $('form#ajaxforgot p.status').show().html('<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
 	        resize_booked_modal();
 
 	        var $this = $(this);
@@ -629,13 +629,13 @@ var booked_load_calendar_date_booking_options,
 						$('#ajaxlogin').show();
 						$('#ajaxforgot').hide();
 
-						$('form#ajaxlogin p.status').show().html('<i class="booked-icon booked-icon-check" style="color:#56c477"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_password_reset);
+						$('form#ajaxlogin p.status').show().html('<i class="fa-solid fa-check" style="color:#56c477"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_password_reset);
 						resize_booked_modal();
 
 					} else {
 
 						//console.log(data);
-						$('form#ajaxforgot p.status').show().html('<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_password_reset_error);
+						$('form#ajaxforgot p.status').show().html('<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_password_reset_error);
 						resize_booked_modal();
 
 					}
@@ -648,7 +648,7 @@ var booked_load_calendar_date_booking_options,
 		// Submit the "Request Appointment" Form
 		$('body').on('click','.booked-form input#submit-request-appointment',function(e){
 
-			$('form#newAppointmentForm p.status').show().html('<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
+			$('form#newAppointmentForm p.status').show().html('<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
 	        resize_booked_modal();
 
 			e.preventDefault();
@@ -708,19 +708,19 @@ var booked_load_calendar_date_booking_options,
 		    });
 
 		    if (showRequiredError) {
-			    $('form#newAppointmentForm p.status').show().html('<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_fill_out_required_fields);
+			    $('form#newAppointmentForm p.status').show().html('<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_fill_out_required_fields);
 				resize_booked_modal();
 			    return false;
 		    }
 
 			if ( customerType == 'new' && !name || customerType == 'new' && surnameActive && !surname || customerType == 'new' && !email || customerType == 'new' && !password ) {
-				$('form#newAppointmentForm p.status').show().html('<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_appt_required_fields);
+				$('form#newAppointmentForm p.status').show().html('<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_appt_required_fields);
 				resize_booked_modal();
 				return false;
 			}
 
 			if ( customerType == 'guest' && !guest_name || customerType == 'guest' && guest_emailActive && !guest_email || customerType == 'guest' && guest_surnameActive && !guest_surname ){
-				$('form#newAppointmentForm p.status').show().html('<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_appt_required_fields_guest);
+				$('form#newAppointmentForm p.status').show().html('<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_appt_required_fields_guest);
 				resize_booked_modal();
 				return false;
 			}
@@ -1069,7 +1069,7 @@ var booked_load_calendar_date_booking_options,
 
 			_setStatusMsg: function( msg ) {
 				var form_status_selector = SubmitRequestAppointment.formSelector + ' ' + SubmitRequestAppointment.formStatusSelector;
-				$( form_status_selector ).show().html( '<i class="booked-icon booked-icon-alert" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + msg );
+				$( form_status_selector ).show().html( '<i class="fa-solid fa-triangle-exclamation" style="color:#E35656"></i>&nbsp;&nbsp;&nbsp;' + msg );
 			},
 
 			_getApptElement: function( appt_index ) {
@@ -1118,7 +1118,7 @@ var booked_load_calendar_date_booking_options,
 			},
 
 			_showLoadingMessage: function() {
-				$('form#newAppointmentForm p.status').show().html('<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
+				$('form#newAppointmentForm p.status').show().html('<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;&nbsp;' + booked_js_vars.i18n_please_wait);
 			},
 
 			_reloadApptsList: function() {
@@ -1166,11 +1166,11 @@ var booked_load_calendar_date_booking_options,
 			},
 
 			_reloadCalendarTable: function() {
-				if ( ! $('td.active').length ) {
+				if ( ! $('.bc-col.active').length ) {
 					return;
 				}
 
-				var $activeTD = $('td.active'),
+				var $activeTD = $('.bc-col.active'),
 					activeDate = $activeTD.attr('data-date'),
 					calendar_id = parseInt( $activeTD.parents('table').data('calendar-id') ) || 0;
 
@@ -1183,12 +1183,12 @@ var booked_load_calendar_date_booking_options,
 					data: booked_load_calendar_date_booking_options,
 					success: function( html ) {
 
-						$('tr.entryBlock').find('td').html( html );
+						$('.bc-row.entryBlock').find('.bc-col').html( html );
 
 						close_booked_modal();
-						$('tr.entryBlock').removeClass('booked-loading');
-						$('tr.entryBlock').find('.booked-appt-list').hide().fadeIn(300);
-						$('tr.entryBlock').find('.booked-appt-list').addClass('shown');
+						$('.bc-row.entryBlock').removeClass('booked-loading');
+						$('.bc-row.entryBlock').find('.booked-appt-list').hide().fadeIn(300);
+						$('.bc-row.entryBlock').find('.booked-appt-list').addClass('shown');
 						adjust_calendar_boxes();
 					}
 				});
@@ -1197,7 +1197,7 @@ var booked_load_calendar_date_booking_options,
 	});
 
 	function bookedRemoveEmptyTRs(){
-		$('table.booked-calendar').find('tr.week').each(function(){
+		$('div.booked-calendar').find('.bc-row.week').each(function(){
 			if ($(this).children().length == 0){
 				$(this).remove();
 			}
@@ -1214,13 +1214,13 @@ var booked_load_calendar_date_booking_options,
 
 			var $savingStateDIV = limit_to.find('li.active .savingState, .topSavingState.savingState, .calendarSavingState');
 			var $stuffToHide = limit_to.find('.monthName');
-			var $stuffToTransparent = limit_to.find('table.booked-calendar tbody');
+			var $stuffToTransparent = limit_to.find('div.booked-calendar .bc-body');
 
 		} else {
 
 			var $savingStateDIV = $('li.active .savingState, .topSavingState.savingState, .calendarSavingState');
 			var $stuffToHide = $('.monthName');
-			var $stuffToTransparent = $('table.booked-calendar tbody');
+			var $stuffToTransparent = $('div.booked-calendar .bc-body');
 
 		}
 
@@ -1448,20 +1448,20 @@ function init_tooltips(container){
 
 // Function to adjust calendar sizing
 function adjust_calendar_boxes(){
-	jQuery('.booked-calendar').each(function(){
+	jQuery('div.booked-calendar').each(function(){
 
 		var windowWidth = jQuery(window).width();
 		var smallCalendar = jQuery(this).parents('.booked-calendar-wrap').hasClass('small');
-		var boxesWidth = jQuery(this).find('tbody tr.week td').width();
+		var boxesWidth = jQuery(this).find('.bc-body .bc-row.week .bc-col').width();
 		var calendarHeight = jQuery(this).height();
 		boxesHeight = boxesWidth * 1;
-		jQuery(this).find('tbody tr.week td').height(boxesHeight);
-		jQuery(this).find('tbody tr.week td .date').css('line-height',boxesHeight+'px');
-		jQuery(this).find('tbody tr.week td .date .number').css('line-height',boxesHeight+'px');
+		jQuery(this).find('.bc-body .bc-row.week .bc-col').height(boxesHeight);
+		jQuery(this).find('.bc-body .bc-row.week .bc-col .date').css('line-height',boxesHeight+'px');
+		jQuery(this).find('.bc-body .bc-row.week .bc-col .date .number').css('line-height',boxesHeight+'px');
 		if (smallCalendar || windowWidth < 720){
-			jQuery(this).find('tbody tr.week td .date .number').css('line-height',boxesHeight+'px');
+			jQuery(this).find('.bc-body .bc-row.week .bc-col .date .number').css('line-height',boxesHeight+'px');
 		} else {
-			jQuery(this).find('tbody tr.week td .date .number').css('line-height','');
+			jQuery(this).find('.bc-body .bc-row.week .bc-col .date .number').css('line-height','');
 		}
 
 		var calendarHeight = jQuery(this).height();

@@ -52,7 +52,7 @@ echo '<div class="booked-scrollable">';
 			$full_date = date_i18n( 'Y-m-d', $timestamp );
 
 			echo '<div class="field">';
-				echo '<i class="booked-icon booked-icon-calendar" style="font-size:1.2em; position:relative; top:-1px;"></i>&nbsp;&nbsp;<span class="booked_appt_date-formatted">' . date_i18n( $date_format, $timestamp ) . '</span>';
+				echo '<i class="fa-solid fa-calendar-days" style="font-size:1.2em; position:relative; top:-1px;"></i>&nbsp;&nbsp;<span class="booked_appt_date-formatted">' . date_i18n( $date_format, $timestamp ) . '</span>';
 				echo '<input type="hidden" placeholder="Date..." class="large textfield booked_appt_date" name="appt_date" value="' . date_i18n( 'Y-m-d', $timestamp ) . '">';
 			echo '</div>';
 			echo '<div class="field timeslots-select-field">';
@@ -84,36 +84,66 @@ echo '<div class="booked-scrollable">';
 
 			if (isset($name_requirements[0]) && $name_requirements[0] == 'require_surname'): ?>
 				<div class="field">
-					<input value="<?php echo $first_name; ?>" placeholder="<?php esc_html_e('First Name','booked'); ?>..." type="text" class="textfield" name="name" />
-					<input value="<?php echo $last_name; ?>" placeholder="<?php esc_html_e('Last Name','booked'); ?>..." type="text" class="textfield" name="surname" />
+					<input value="<?php echo $first_name; ?>" placeholder="<?php esc_html_e('First Name','booked'); ?>..." type="text" class="textfield" name="name"<?php if ( $user_id && user_can( $user_id, 'manage_options' ) ):
+						echo ' readonly="true"';
+					endif; ?> />
+					<input value="<?php echo $last_name; ?>" placeholder="<?php esc_html_e('Last Name','booked'); ?>..." type="text" class="textfield" name="surname"<?php if ( $user_id && user_can( $user_id, 'manage_options' ) ):
+						echo ' readonly="true"';
+					endif; ?> />
 				</div>
 			<?php else: ?>
 				<div class="field">
-					<input value="<?php echo $first_name . ( $last_name ? ' ' . $last_name : '' ); ?>" placeholder="<?php esc_html_e('Name','booked'); ?>..." type="text" class="large textfield" name="name" />
+					<input
+						value="<?php echo $first_name . ( $last_name ? ' ' . $last_name : '' ); ?>"
+						placeholder="<?php esc_html_e('Name','booked'); ?>..."
+						type="text"
+						class="large textfield"
+						name="name"<?php
+						if ( $user_id && user_can( $user_id, 'manage_options' ) ):
+							echo ' readonly="true"';
+						endif;
+					?> />
 				</div>
 			<?php endif;
 
 			if ($customer_email):
 				?><div class="field">
-					<input value="<?php echo $customer_email; ?>" placeholder="<?php esc_html_e('Email Address','booked'); ?>..." type="email" class="large textfield" name="email" />
+					<input
+						value="<?php echo $customer_email; ?>"
+						placeholder="<?php esc_html_e('Email Address','booked'); ?>..."
+						type="email"
+						class="large textfield"
+						name="email"<?php
+						if ( $user_id && user_can( $user_id, 'manage_options' ) ):
+							echo ' readonly="true"';
+						endif;
+					?> />
 				</div><?php
 			endif;
 
 			if ($customer_phone):
 				?><div class="field">
-					<input value="<?php echo $customer_phone; ?>" placeholder="<?php esc_html_e('Phone Number','booked'); ?>..." type="tel" class="large textfield" name="phone" />
+					<input value="<?php echo $customer_phone; ?>" placeholder="<?php esc_html_e('Phone Number','booked'); ?>..." type="tel" class="large textfield" name="phone"<?php
+						if ( $user_id && user_can( $user_id, 'manage_options' ) ):
+							echo ' readonly="true"';
+						endif;
+					?> />
 				</div><?php
 			endif;
 
-			echo '<hr>';
+			if ( $cf_meta_value ):
+			
+				echo '<hr />';
+	
+				?><p class="booked-calendar-name"><?php esc_html_e( 'Appointment Information', 'booked' ); ?></p><?php
+	
+				do_action('booked_before_appointment_information_admin');
+				echo ( $cf_meta_value ? '<div class="cf-meta-values">'.$cf_meta_value.'</div>' : '');
+				do_action('booked_after_appointment_information_admin');
+				
+			endif;
 
-			?><p class="booked-calendar-name"><?php esc_html_e( 'Appointment Information', 'booked' ); ?></p><?php
-
-			do_action('booked_before_appointment_information_admin');
-			echo ($cf_meta_value ? '<div class="cf-meta-values">'.$cf_meta_value.'</div>' : '');
-			do_action('booked_after_appointment_information_admin');
-
-			echo '<hr>';
+			echo '<hr />';
 
 			?><input type="hidden" name="action" value="booked_admin_edit_appt" />
 			<input type="hidden" name="user_id" value="<?php echo $user_id; ?>" />
@@ -131,4 +161,4 @@ echo '<div class="booked-scrollable">';
 echo '</div>';
 
 // Close button
-echo '<a href="#" class="close"><i class="booked-icon booked-icon-close"></i></a>';
+echo '<a href="#" class="close"><i class="fa-solid fa-xmark"></i></a>';

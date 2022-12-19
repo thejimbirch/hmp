@@ -14,8 +14,8 @@ if( !defined( 'ABSPATH') ) exit();
 class Essential_Grid_Update {
 
 	private $plugin_url			= 'https://codecanyon.net/item/essential-grid-wordpress-plugin/7563340';
-	private $remote_url			= 'https://updates.themepunch.tools/check_for_updates.php';
-	private $remote_url_info	= 'https://updates.themepunch.tools/essential-grid/essential-grid.php';
+	private $remote_url			= '/check_for_updates.php';
+	private $remote_url_info	= '/essential-grid/essential-grid.php';
 	private $plugin_slug		= 'essential-grid';
 	private $plugin_path		= 'essential-grid/essential-grid.php';
 	private $version;
@@ -117,14 +117,15 @@ class Essential_Grid_Update {
 
 
 	public function _retrieve_update_info() {
-
 		global $wp_version;
 		$data = new stdClass;
-
+		$esglb = new Essential_Grid_LoadBalancer();
+		$url = $esglb->get_url('updates');
+		
 		// Build request
 		$code = get_option('tp_eg_code', '');
 		
-		$request = wp_remote_post($this->remote_url_info, array(
+		$request = wp_remote_post($url.$this->remote_url_info, array(
 			'user-agent' => 'WordPress/'.$wp_version.'; '.get_bloginfo('url'),
 			'body' => array(
 				'code' => urlencode($code),
@@ -160,9 +161,12 @@ class Essential_Grid_Update {
 		
 		// Check for updates
 		if(time() - $last_check > 14400 || $force == true){
+			$esglb = new Essential_Grid_LoadBalancer();
+			$url = $esglb->get_url('updates');
+			
 			update_option('tp_eg_update-check-short', time());
 			
-			$response = wp_remote_post($this->remote_url, array(
+			$response = wp_remote_post($url.$this->remote_url, array(
 				'user-agent' => 'WordPress/'.$wp_version.'; '.get_bloginfo('url'),
 				'body' => array(
 					'item' => urlencode('essential-grid'),

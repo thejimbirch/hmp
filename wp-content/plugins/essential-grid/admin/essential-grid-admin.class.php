@@ -144,7 +144,8 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 		// Privacy
 		add_action('admin_init', array($this, 'add_suggested_privacy_content'), 15);
 
-
+        $instagram = new Essential_Grid_Instagram();
+        $instagram->add_actions();
 	}
 
 	/**
@@ -219,7 +220,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 				}
 				?>
 				<script type="text/javascript">
-					jQuery('.esg-notices-button').click(function(){
+					jQuery('.esg-notices-button').on('click',function(){
 
 						var notice_id = jQuery(this).attr('class').replace('esg-notices-button', '').replace('esg-notice-', '');
 
@@ -256,7 +257,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 		$n = '';
 		$n .= '<div class="updated below-h2 eg-update-notice-wrap" style="margin-left: 0;" id="message"><a href="javascript:void(0);" style="float: right;" id="eg-dismiss-notice">×</a><p>'.__('Hi! Please activate your copy of the Essential Grid to receive live updates, premium support and the template library.', EG_TEXTDOMAIN).'</p></div>'."\n";
 		$n .= '<script type="text/javascript">'."\n";
-		$n .= '	jQuery(\'#eg-dismiss-notice\').click(function(){'."\n";
+		$n .= '	jQuery(\'#eg-dismiss-notice\').on(\'click\',function(){'."\n";
 		$n .= '		var objData = {'."\n";
 		$n .= '			action: \'Essential_Grid_request_ajax\','."\n";
 		$n .= '			client_action: \'dismiss_notice\','."\n";
@@ -310,7 +311,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 
 			wp_enqueue_style($this->plugin_slug .'-admin-styles', EG_PLUGIN_URL . 'admin/assets/css/esg-admin.css', array(), Essential_Grid::VERSION );
 
-			wp_enqueue_style($this->plugin_slug .'-codemirror-styles', EG_PLUGIN_URL . 'admin/assets/css/codemirror.css', array(), Essential_Grid::VERSION );
+			wp_enqueue_style($this->plugin_slug .'-esg-mirror-styles', EG_PLUGIN_URL . 'admin/assets/css/esg-mirror.css', array(), Essential_Grid::VERSION );
 
 			wp_enqueue_style($this->plugin_slug .'-tooltipser-styles', EG_PLUGIN_URL . 'admin/assets/css/tooltipster.css', array(), Essential_Grid::VERSION );
 
@@ -352,11 +353,22 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 			return;
 		}
 		
-		global $esg_dev_mode;
+		global $esg_dev_mode, $wp_version;
+		
+		if(strpos($wp_version, '-') !== false){
+			$_wpver = explode('-', $wp_version);
+			$wp_version = $_wpver[0];
+		}
+		
 		$screen = get_current_screen();
 		if(in_array($screen->id, $this->plugin_screen_hook_suffix)){
 
-			wp_enqueue_script(array('jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'jquery-ui-slider', 'jquery-ui-autocomplete', 'jquery-ui-sortable', 'jquery-ui-droppable', 'jquery-ui-tabs', 'wp-color-picker'));
+			wp_enqueue_script(array('jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'jquery-ui-slider', 'jquery-ui-autocomplete', 'jquery-ui-droppable', 'jquery-ui-tabs', 'wp-color-picker'));
+			
+			if(version_compare($wp_version, '5.6', '<')){
+				wp_enqueue_script('jquery-ui-sortable', 'jquery-ui-draggable');
+			}
+			
 			wp_enqueue_style('esg-color-picker-css', plugins_url('assets/css/tp-color-picker.css', __FILE__ ), array(), Essential_Grid::VERSION);
 			wp_enqueue_style('esg-select2-css', plugins_url('assets/css/select2ESG.css', __FILE__ ), array(), Essential_Grid::VERSION);
 			
@@ -381,8 +393,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 				wp_enqueue_script($this->plugin_slug . '-tooltipser-script', plugins_url('assets/js/plugins/tooltipster.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION );
 
 				//UTILS
-				wp_enqueue_script($this->plugin_slug . '-codemirror-script', plugins_url('assets/js/plugins/codemirror.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION );
-				wp_enqueue_script($this->plugin_slug . '-jquery-draggable', plugins_url('assets/js/plugins/jquery-ui.draggable.js', __FILE__ ), array('jquery', 'jquery-ui-dialog'), Essential_Grid::VERSION );
+				wp_enqueue_script($this->plugin_slug . '-esgmirror-script', plugins_url('assets/js/plugins/esgmirror.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION );
 				wp_enqueue_script('esg-color-picker-js', plugins_url('assets/js/plugins/tp-color-picker.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION);
 				wp_enqueue_script('esg-select2-js', plugins_url('assets/js/plugins/select2ESG.full.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION);
 
@@ -392,7 +403,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 				
 				//ToolTipser + Admin.js
 				wp_enqueue_script($this->plugin_slug . '-admin-script', plugins_url('assets/js/modules/admin.min.js', __FILE__ ), array('jquery', 'wp-color-picker'), Essential_Grid::VERSION );
-				//CodeMirror, + Draggable + ColorPicker JS
+				//ESGMirror, + ColorPicker JS
 				wp_enqueue_script($this->plugin_slug . '-utils', plugins_url('assets/js/plugins/utils.min.js', __FILE__ ), array('jquery', 'jquery-ui-dialog'), Essential_Grid::VERSION );
 
 				//ESG Box
@@ -414,7 +425,10 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 
 		foreach($post_types as $post_type){
 			if($post_type == $screen->id){
-				wp_enqueue_script(array('wpdialogs', 'jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'wp-color-picker'));
+				wp_enqueue_script(array('wpdialogs', 'jquery', 'jquery-ui-core', 'wp-color-picker'));
+				if(version_compare($wp_version, '5.6', '<')){
+					wp_enqueue_script('jquery-ui-sortable');
+				}
 				wp_enqueue_style('esg-color-picker-css', plugins_url('assets/css/tp-color-picker.css', __FILE__ ), array(), Essential_Grid::VERSION);
 				wp_enqueue_style('esg-select2-css', plugins_url('assets/css/select2ESG.css', __FILE__ ), array(), Essential_Grid::VERSION);
 				if($esg_dev_mode){ // DEV VERSION
@@ -707,7 +721,7 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
         $params = json_decode($data['postparams'], JSON_OBJECT_AS_ARRAY);
         if($params['source-type'] == 'stream' && $params['stream-source-type'] == 'instagram'){
             $insta = new Essential_Grid_Instagram();
-            $insta->clear_esg_transient($params['instagram-api-key'], $params['instagram-count']);
+            $insta->clear_esg_transient($data['handle'], $params['instagram-api-key'], $params['instagram-count']);
         }
         return $data;
     }
@@ -1086,15 +1100,22 @@ class Essential_Grid_Admin extends Essential_Grid_Base {
 
 
 	public static function add_to_VC(){
-		global $esg_dev_mode;
+		global $esg_dev_mode, $wp_version;
 		//$essential_grids_arr = Essential_Grid::get_grids_short_vc();
-
+		
+		if(strpos($wp_version, '-') !== false){
+			$_wpver = explode('-', $wp_version);
+			$wp_version = $_wpver[0];
+		}
 		if($esg_dev_mode){
 			wp_enqueue_script('essential-grid-admin-script', plugins_url('assets/js/modules/admin.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION );
 		} else {
 			wp_enqueue_script('essential-grid-admin-script', plugins_url('assets/js/modules/admin.min.js', __FILE__ ), array('jquery'), Essential_Grid::VERSION );
 		}
-		wp_enqueue_script('wpdialogs', 'jquery-ui-sortable', 'jquery-ui-dialog');
+		wp_enqueue_script('wpdialogs', 'jquery-ui-dialog');
+		if(version_compare($wp_version, '5.6', '<')){
+			wp_enqueue_script('jquery-ui-sortable');
+		}
 		wp_enqueue_style('wp-jquery-ui-dialog');
 
 		vc_map( apply_filters('essgrid_add_to_VC', array(

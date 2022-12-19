@@ -472,7 +472,7 @@ if( !defined( 'ABSPATH') ) exit();
 				<div class="div13"></div>
 				<label><?php _e('Default', EG_TEXTDOMAIN); ?></label><input class="esg-meta-default-input" type="text" name="esg-meta-default[]" value="{{ data.default }}">									
 				<div class="div13"></div>
-				<div class="eg-custommeta-textarea-wrap" style="display:none"><label><?php _e('List', EG_TEXTDOMAIN); ?></label><textarea class="eg-custommeta-textarea" name="esg-meta-select[]">{{ data['select'] }}</textarea></div>
+				<div class="eg-custommeta-textarea-wrap" style="display:none"><label><?php _e('Comma Separated List', EG_TEXTDOMAIN); ?></label><textarea class="eg-custommeta-textarea" name="esg-meta-select[]">{{ data['select'] }}</textarea></div>
 				<div class="div13"></div>									
 				<div class="esg-btn esg-red eg-meta-delete" ><i class="eg-icon-trash"></i><?php _e('Remove', EG_TEXTDOMAIN); ?></div>
 			</div>

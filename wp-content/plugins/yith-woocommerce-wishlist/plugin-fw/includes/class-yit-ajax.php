@@ -105,8 +105,16 @@ if ( ! class_exists( 'YIT_Ajax' ) ) {
 					if ( ! current_user_can( 'read_post', $post_id ) ) {
 						continue;
 					}
-					$title                   = get_the_title( $post_id ) . ( $show_id ? " (#{$post_id})" : '' );
-					$found_posts[ $post_id ] = apply_filters( 'yith_plugin_fw_json_search_found_post_title', rawurldecode( $title ), $post_id, $request );
+
+					$the_title = yith_plugin_fw_get_post_formatted_name(
+						$post_id,
+						array(
+							'post-type' => $args['post_type'],
+							'show-id'   => $show_id,
+						)
+					);
+
+					$found_posts[ $post_id ] = apply_filters( 'yith_plugin_fw_json_search_found_post_title', rawurldecode( wp_strip_all_tags( $the_title ) ), $post_id, $request );
 				}
 			}
 
@@ -233,7 +241,7 @@ if ( ! class_exists( 'YIT_Ajax' ) ) {
 				die();
 			}
 
-			$terms = yith_get_terms( $args );
+			$terms = get_terms( $args );
 
 			if ( 'id' !== $args['term_field'] ) {
 				$temp_terms = $terms;
@@ -244,6 +252,7 @@ if ( ! class_exists( 'YIT_Ajax' ) ) {
 				}
 			}
 
+			$terms = apply_filters( 'yith_plugin_fw_json_search_found_terms', $terms, $args );
 			wp_send_json( $terms );
 		}
 	}

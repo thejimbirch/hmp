@@ -41,42 +41,73 @@
 
 	else: ?>
 
-		<div class="topSavingState savingState"><i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Updating, please wait...','booked'); ?></div>
+		<div class="topSavingState savingState"><i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Updating, please wait...','booked'); ?></div>
 
 		<div class="booked-settings-title"><?php echo esc_html__('Booked Settings','booked'); ?></div>
 
 		<div id="booked-admin-panel-container">
 
-			<?php $booked_settings_tabs = apply_filters('booked_settings_tabs', array(
-				array(
+			<?php $booked_settings_tabs = [];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'admin',
+				'slug' => 'general',
+				'content' => '<i class="fa-solid fa-gear"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('General','booked') . '</span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'agent',
+				'slug' => 'defaults',
+				'content' => '<i class="fa-solid fa-clock"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Time Slots','booked') . '</span><span class="savingState">&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i></span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'agent',
+				'slug' => 'custom-timeslots',
+				'content' => '<i class="fa-solid fa-clock"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Custom Time Slots','booked') . '</span><span class="savingState">&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i></span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'agent',
+				'slug' => 'custom-fields',
+				'content' => '<i class="fa-solid fa-pencil"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Custom Fields','booked') . '</span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'admin',
+				'slug' => 'email-settings',
+				'content' => '<i class="fa-solid fa-envelope"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Emails','booked') . '</span>'
+			];
+			
+			if ( class_exists('woocommerce') ):
+			
+				$booked_settings_tabs[] = [
 					'access' => 'admin',
-					'slug' => 'general',
-					'content' => '<i class="booked-icon booked-icon-gear"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('General','booked') . '</span>' ),
-				array(
-					'access' => 'agent',
-					'slug' => 'defaults',
-					'content' => '<i class="booked-icon booked-icon-clock"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Time Slots','booked') . '</span><span class="savingState">&nbsp;&nbsp;&nbsp;<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i></span>'),
-				array(
-					'access' => 'agent',
-					'slug' => 'custom-timeslots',
-					'content' => '<i class="booked-icon booked-icon-clock"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Custom Time Slots','booked') . '</span><span class="savingState">&nbsp;&nbsp;&nbsp;<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i></span>'),
-				array(
-					'access' => 'agent',
-					'slug' => 'custom-fields',
-					'content' => '<i class="booked-icon booked-icon-pencil"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Custom Fields','booked') . '</span>'),
-				array(
-					'access' => 'admin',
-					'slug' => 'email-settings',
-					'content' => '<i class="booked-icon booked-icon-email"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Emails','booked') . '</span>'),
-				array(
-					'access' => 'admin',
-					'slug' => 'export-appointments',
-					'content' => '<i class="booked-icon booked-icon-sign-out"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Export','booked') . '</span>'),
-				array(
-					'access' => 'admin',
-					'slug' => 'shortcodes',
-					'content' => '<i class="booked-icon booked-icon-code"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Shortcodes','booked') . '</span>'),
-			));
+					'slug' => 'woocommerce-settings',
+					'content' => '<i class="fa-solid fa-cart-shopping"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('WooCommerce','booked') . '</span>'
+				];
+				
+			endif;
+			
+			$booked_settings_tabs[] = [
+				'access' => 'admin',
+				'slug' => 'calendar-feeds',
+				'content' => '<i class="fa-solid fa-calendar-days"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Calendar Feeds','booked') . '</span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'admin',
+				'slug' => 'export-appointments',
+				'content' => '<i class="fa-solid fa-arrow-up-right-from-square"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Export','booked') . '</span>'
+			];
+			
+			$booked_settings_tabs[] = [
+				'access' => 'admin',
+				'slug' => 'shortcodes',
+				'content' => '<i class="fa-solid fa-code"></i><span class="booked-tab-text">&nbsp;&nbsp;'.esc_html__('Shortcodes','booked') . '</span>'
+			];
+			
+			$booked_settings_tabs = apply_filters( 'booked_settings_tabs', $booked_settings_tabs );
 
 			$tab_counter = 1;
 
@@ -93,7 +124,7 @@
 			?></ul>
 
 			<div class="form-wrapper">
-
+				
 				<?php foreach($booked_settings_tabs as $tab_data):
 
 					if ($tab_data['access'] == 'admin' && current_user_can('manage_booked_options') || $tab_data['access'] == 'agent'):
@@ -107,6 +138,8 @@
 									<?php settings_fields('booked_plugin-group'); ?>
 
 									<div id="booked-general" class="tab-content">
+
+										<h1 style="display:none;"></h1>
 
 										<?php settings_errors(); ?>
 
@@ -587,14 +620,14 @@
 													array(
 														'name' => 'booked_light_color',
 														'title' => 'Light Color',
-														'val' => get_option('booked_light_color','#0073AA'),
-														'default' => '#0073AA'
+														'val' => get_option('booked_light_color','#2371B1'),
+														'default' => '#2371B1'
 													),
 													array(
 														'name' => 'booked_dark_color',
 														'title' => 'Dark Color',
-														'val' => get_option('booked_dark_color','#015e8c'),
-														'default' => '#015e8c'
+														'val' => get_option('booked_dark_color','#014163'),
+														'default' => '#014163'
 
 													),
 													array(
@@ -1152,6 +1185,61 @@ Time: %time%
 								</form>
 
 							<?php break;
+							
+							case 'woocommerce-settings':
+							
+								if ( class_exists('woocommerce') ):
+							
+								?><div id="booked-woocommerce-settings" class="booked-payment-settings-wrap tab-content">
+									<form action="options.php" method="post">
+										<div class="section-row">
+											<div class="section-head">
+												<?php settings_fields( BOOKED_WC_PLUGIN_PREFIX . 'payment_options' );
+												do_settings_sections( BOOKED_WC_PLUGIN_PREFIX . 'payment_options' );
+											?></div>
+										</div><?php
+										submit_button(); ?>
+									</form>
+								</div><?php
+								
+								endif;
+							
+							break;
+							
+							case 'calendar-feeds': ?>
+								
+								<div id="booked-calendar-feeds" class="tab-content">
+									
+									<div class="section-row">
+										<div class="section-head">
+											<?php $section_title = esc_html__('Calendar Feeds', 'booked'); ?>
+											<h3 style="font-size:17px; margin:0; padding:0 0 5px;"><?php echo $section_title; ?></h3>
+									
+											<?php $secure_hash = md5( home_url() ); ?>
+										
+											<p style="width:50%; font-size:14px; margin:0; padding:0 0 20px;"><?php _e('Use the following URLs to either download a static feed (not auto-updating) or paste the URL into your favorite calendar app (Google Calendar, Apple Calendar, etc.) as a subscription to load a read-only auto-updating appointment feed.','booked-ical'); ?></p>
+											
+											<p style="font-size:15px; margin:0; padding:0 0 10px;"><strong><?php _e('All Appointments','booked-ical'); ?></strong></p>
+											<p style="font-size:15px; margin:0; padding:0 0 20px;"><input readonly="readonly" type="text" style="width:50%;" value="<?php echo get_site_url(); ?>/?booked_ical&sh=<?php echo esc_attr( BOOKEDICAL_SECURE_HASH ); ?>"></p>
+											
+											<?php $calendars = get_terms('booked_custom_calendars','orderby=slug&hide_empty=0');
+												
+											if (!empty($calendars)):
+												
+												foreach($calendars as $calendar):
+													
+													?><p style="font-size:15px; margin:0; padding:0 0 10px;"><strong><?php echo $calendar->name; ?></strong></p>
+													<p style="font-size:15px; margin:0; padding:0 0 20px;"><input readonly="readonly" type="text" style="width:50%;" value="<?php echo get_site_url(); ?>/?booked_ical&calendar=<?php echo $calendar->term_id; ?>&sh=<?php echo esc_attr( BOOKEDICAL_SECURE_HASH ); ?>"></p><?php
+												
+												endforeach;
+															
+											endif; ?>
+										</div>
+									</div>
+								
+								</div>
+							
+							<?php break;
 
 							case 'defaults': ?>
 
@@ -1301,7 +1389,7 @@ Time: %time%
 															<input id="vacationDayCheckbox" name="vacationDayCheckbox" type="checkbox" value="1"<?php if ($this_timeslot['vacationDayCheckbox']): echo ' checked="checked"'; endif; ?>>
 															<label for="vacationDayCheckbox"><?php esc_html_e('Disable appointments','booked'); ?></label>
 
-															<a href="#" class="deleteCustomTimeslot"><i class="booked-icon booked-icon-close"></i></a>
+															<a href="#" class="deleteCustomTimeslot"><i class="fa-solid fa-xmark"></i></a>
 
 															<?php
 
@@ -1329,7 +1417,7 @@ Time: %time%
 																	$time_format = get_option('time_format');
 
 																	echo '<span class="timeslot" data-timeslot="'.$timeslot.'">';
-																		echo '<span class="slotsBlock"><span class="changeCount minus" data-count="-1"><i class="booked-icon booked-icon-minus-circle"></i></span><span class="count"><em>'.$count.'</em> ' . _n('Space Available','Spaces Available',$count,'booked') . '</span><span class="changeCount add" data-count="1"><i class="booked-icon booked-icon-plus-circle"></i></span></span>';
+																		echo '<span class="slotsBlock"><span class="changeCount minus" data-count="-1"><i class="fa-solid fa-circle-minus"></i></span><span class="count"><em>'.$count.'</em> ' . _n('Space Available','Spaces Available',$count,'booked') . '</span><span class="changeCount add" data-count="1"><i class="fa-solid fa-circle-plus"></i></span></span>';
 
 																		do_action( 'booked_single_custom_timeslot_start', $this_timeslot, $timeslot, $this_timeslot['booked_custom_calendar_id'] );
 
@@ -1341,14 +1429,14 @@ Time: %time%
 																		}
 
 																		if ($time[0] == '0000' && $time[1] == '2400'):
-																			echo '<span class="start"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . strtoupper(esc_html__('All day','booked')) . '</span>';
+																			echo '<span class="start"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . strtoupper(esc_html__('All day','booked')) . '</span>';
 																		else :
-																			echo '<span class="start"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . date_i18n($time_format,strtotime('2014-01-01 '.$time[0])) . '</span> &ndash; <span class="end">' . date_i18n($time_format,strtotime('2014-01-01 '.$time[1])) . '</span>';
+																			echo '<span class="start"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . date_i18n($time_format,strtotime('2014-01-01 '.$time[0])) . '</span> &ndash; <span class="end">' . date_i18n($time_format,strtotime('2014-01-01 '.$time[1])) . '</span>';
 																		endif;
 
 																		do_action( 'booked_single_custom_timeslot_end', $this_timeslot, $timeslot, $this_timeslot['booked_custom_calendar_id'] );
 
-																		echo '<span class="delete"><i class="booked-icon booked-icon-close"></i></span>';
+																		echo '<span class="delete"><i class="fa-solid fa-xmark"></i></span>';
 																	echo '</span>';
 
 																endforeach;
@@ -1374,7 +1462,7 @@ Time: %time%
 										<div class="section-row submit-section bookedClearFix" style="padding:0;">
 											<button class="button addCustomTimeslot"><?php esc_html_e('Add Date(s)','booked'); ?></button>
 											<input id="booked-saveCustomTimeslots" type="button" disabled="true" class="button saveCustomTimeslots" value="<?php esc_html_e('Save Custom Time Slots','booked'); ?>">
-											<div class="cts-updater savingState"><i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Saving','booked'); ?>...</div>
+											<div class="cts-updater savingState"><i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Saving','booked'); ?>...</div>
 										</div><!-- /.section-row -->
 
 									</form>
@@ -1410,7 +1498,7 @@ Time: %time%
 										<input id="vacationDayCheckbox" name="vacationDayCheckbox" type="checkbox" value="1">
 										<label for="vacationDayCheckbox"><?php esc_html_e('Disable appointments','booked'); ?></label>
 
-										<a href="#" class="deleteCustomTimeslot"><i class="booked-icon booked-icon-close"></i></a>
+										<a href="#" class="deleteCustomTimeslot"><i class="fa-solid fa-xmark"></i></a>
 
 										<div class="customTimeslotsList"></div>
 
@@ -1478,62 +1566,62 @@ Time: %time%
 
 											<ul id="booked-cf-sortable-templates">
 
-												<li id="bookedCFTemplate-single-line-text-label" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-single-line-text-label" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Single Line Text','booked'); ?></small>
 													<p><input class="cf-required-checkbox" type="checkbox" name="required" id="required"> <label for="required"><?php esc_html_e('Required Field','booked'); ?></label></p>
 													<input type="text" name="single-line-text-label" value="" placeholder="<?php esc_html_e('Enter a label for this field...','booked'); ?>" />
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-paragraph-text-label" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-paragraph-text-label" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Paragraph Text','booked'); ?></small>
 													<p><input class="cf-required-checkbox" type="checkbox" name="required" id="required"> <label for="required"><?php esc_html_e('Required Field','booked'); ?></label></p>
 													<input type="text" name="paragraph-text-label" value="" placeholder="<?php esc_html_e('Enter a label for this field...','booked'); ?>" />
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-checkboxes-label" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-checkboxes-label" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Checkboxes','booked'); ?></small>
 													<p><input class="cf-required-checkbox" type="checkbox" name="required" id="required"> <label for="required"><?php esc_html_e('Required Field','booked'); ?></label></p>
 													<input type="text" name="checkboxes-label" value="" placeholder="<?php esc_html_e('Enter a label for this checkbox group...','booked'); ?>" />
 													<ul id="booked-cf-checkboxes"></ul>
 													<button class="cfButton button" data-type="single-checkbox">+ <?php esc_html_e('Checkbox','booked'); ?></button>
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-radio-buttons-label" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-radio-buttons-label" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Radio Buttons','booked'); ?></small>
 													<p><input class="cf-required-checkbox" type="checkbox" name="required" id="required"> <label for="required"><?php esc_html_e('Required Field','booked'); ?></label></p>
 													<input type="text" name="radio-buttons-label" value="" placeholder="<?php esc_html_e('Enter a label for this radio button group...','booked'); ?>" />
 													<ul id="booked-cf-radio-buttons"></ul>
 													<button class="cfButton button" data-type="single-radio-button">+ <?php esc_html_e('Option','booked'); ?></button>
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-drop-down-label" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-drop-down-label" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Drop Down','booked'); ?></small>
 													<p><input class="cf-required-checkbox" type="checkbox" name="required" id="required"> <label for="required"><?php esc_html_e('Required Field','booked'); ?></label></p>
 													<input type="text" name="drop-down-label" value="" placeholder="<?php esc_html_e('Enter a label for this drop-down group...','booked'); ?>" />
 													<ul id="booked-cf-drop-down"></ul>
 													<button class="cfButton button" data-type="single-drop-down">+ <?php esc_html_e('Option','booked'); ?></button>
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-plain-text-content" class="ui-state-default"><i class="main-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-plain-text-content" class="ui-state-default"><i class="main-handle fa-solid fa-bars"></i>
 													<small><?php esc_html_e('Text Content','booked'); ?></small>
 													<textarea name="plain-text-content"></textarea>
 													<small class="help-text"><?php esc_html_e('HTML allowed','booked'); ?></small>
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
 
-												<li id="bookedCFTemplate-single-checkbox" class="ui-state-default "><i class="sub-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-single-checkbox" class="ui-state-default "><i class="sub-handle fa-solid fa-bars"></i>
 													<?php do_action('booked_before_custom_checkbox'); ?>
 													<input type="text" name="single-checkbox" value="" placeholder="<?php esc_html_e('Enter a label for this checkbox...','booked'); ?>" />
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 													<?php do_action('booked_after_custom_checkbox'); ?>
 												</li>
-												<li id="bookedCFTemplate-single-radio-button" class="ui-state-default "><i class="sub-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-single-radio-button" class="ui-state-default "><i class="sub-handle fa-solid fa-bars"></i>
 													<input type="text" name="single-radio-button" value="" placeholder="<?php esc_html_e('Enter a label for this radio button...','booked'); ?>" />
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
-												<li id="bookedCFTemplate-single-drop-down" class="ui-state-default "><i class="sub-handle booked-icon booked-icon-bars"></i>
+												<li id="bookedCFTemplate-single-drop-down" class="ui-state-default "><i class="sub-handle fa-solid fa-bars"></i>
 													<input type="text" name="single-drop-down" value="" placeholder="<?php esc_html_e('Enter a label for this option...','booked'); ?>" />
-													<span class="cf-delete"><i class="booked-icon booked-icon-close"></i></span>
+													<span class="cf-delete"><i class="fa-solid fa-trash-can"></i></span>
 												</li>
 
 												<?php do_action('booked_custom_fields_add_template') ?>
@@ -1546,7 +1634,7 @@ Time: %time%
 
 									<div class="section-row submit-section bookedClearFix" style="padding:0;">
 										<input id="booked-cf-saveButton" type="button" class="button button-primary" value="<?php esc_html_e('Save Custom Fields','booked'); ?>">
-										<div class="cf-updater savingState"><i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Saving','booked'); ?>...</div>
+										<div class="cf-updater savingState"><i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<?php esc_html_e('Saving','booked'); ?>...</div>
 									</div><!-- /.section-row -->
 
 								</div><!-- /templates -->
@@ -1670,7 +1758,7 @@ Time: %time%
 
 										<div class="section-row submit-section" style="padding:0;">
 											<p class="submit">
-												<button class="button-primary"><i class="booked-icon booked-icon-sign-out"></i>&nbsp;&nbsp;<?php esc_html_e('Export Appointments to CSV','booked'); ?></button>
+												<button class="button-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i>&nbsp;&nbsp;<?php esc_html_e('Export Appointments to CSV','booked'); ?></button>
 											</p>
 										</div>
 

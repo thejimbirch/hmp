@@ -1,5 +1,66 @@
 <div class="essential-grid-revolution-update-list">
-	<h3 class="version-number">Version 3.0.7 (2nd September 2020)</h3>
+
+	<h3 class="version-number">Version 3.0.11 (31th December 2020)</h3>
+	<div class="bugfix"><strong style="font-weight:700">BUGFIX</strong></div>
+	<ul>
+		<li>Fixed filters "Hide All" not working properly</li>
+		<li>Fixed not beeing able to deselect filter categories</li>
+		<li>Fixed custom grids not replacing metas properly if they are set in the post fields</li>
+		<li>Fixed YouTube playlist select box being limited to 50 playlists</li>
+		<li>Fixed an issue with the Real Media Library's source selection reverting to "All" after every updating of the grid</li>
+		<li>Fixed an issue importing demo data not working properly when terms are invalid</li>
+		<li>Updated Ajax function handling to avoid console errors in some rare cases</li>
+		<li>Fixed Flip Up "out" layer animation effect</li>
+		<li>Fixed Custom Category List which mostly only show the used Categories, and not the Added Categories from List yet</li>
+	</ul>
+	
+	<h3 class="version-number">Version 3.0.10 (10th December 2020)</h3>
+	<div class="newfeature"><strong style="font-weight:700">NEW FEATURE</strong></div>
+	<ul>
+		<li>Added new option in Nav-Filter-Sort - Filter Groups called "Add Filters By". This will allow to select if Categories, Tags or both will be added as filters to the Grid Items</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">BUGFIX</strong></div>
+	<ul>
+		<li>Replaced depricated jQuery functions to raise compatibility with upcoming WordPress versions</li>			
+	</ul>
+	
+	<h3 class="version-number">Version 3.0.9 (2nd December 2020)</h3>
+	<div class="newfeature"><strong style="font-weight:700">NEW FEATURE</strong></div>
+	<ul>
+		<li>Added new option in Nav-Filter-Sort - Filter Groups called "Add Filters By". This will allow to select if Categories, Tags or both will be added as filters to the Grid Items</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">BUGFIX</strong></div>
+	<ul>
+		<li>UTF-8 characters now work properly in filters</li>
+		<li>Fixed a glitch with the Load More function which loaded Double of the elements at start</li>
+		<li>Fixed a bug where importin grids did not work if no fonts are present in the Essential Grid installation</li>
+		<li>Adding new Layers in Skin Editor sometimes produced zero dimension Elements. Bug is fixed</li>
+		<li>Replaced depricated jQuery functions to raise compatibility with upcoming WordPress versions</li>			
+	</ul>
+	
+	<h3 class="version-number">Version 3.0.8 (19th November 2020)</h3>
+	<div class="newfeature"><strong style="font-weight:700">NEW FEATURE</strong></div>
+	<ul>
+		<li>Added Mute/Unmute option to Inline Videos</li>
+		<li>Added Filter options like Tags, Categories and Tags & Categories to Quick Grid Related Post Builder</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">BUGFIX</strong></div>
+	<ul>
+		<li>Added a protecion against an unavailable function Parse_blocks which may brake Editor and frontend pages in older WP version</li>
+		<li>Added NameSpace protection for CodeMirror to avoid conflicts with Themes and other Plugins</li>
+		<li>If MP4 video Source is declared with mp3 audio files, autoplay and muted will be ignored and a controller will show in any cases which allows to play mp3 audio files in place</li>
+		<li>Fixed a bug where using the same Grid mutltiple times on a page may resulted in only one Grid showing up</li>
+		<li>Fixed Link target for links on item cover</li>
+		<li>Fixed a bug where the alternate image was not correctly translated in custom grids inside of text layer elements</li>
+		<li>Fixed a bug where the custom dropdown was using the same dropdown text</li>
+		<li>Fixed a bug in the flickr source, flickr user url needed to be shown for photoset selection also</li>
+		<li>Fixed a bug where example logos were not shown in the skin selection screen</li>
+		<li>Eliminated sloppy Gutenberg editor setting updating</li>
+		<li>Fixed Fonts Remove function in General Settings</li>
+		<li>Fixed Output of Multi-Select meta data</li>
+	</ul>
+
+	<h3 class="version-number">Version 3.0.7 (02nd September 2020)</h3>
 	<div class="newfeature"><strong style="font-weight:700">NEW FEATURE</strong></div>
 	<ul>
 		<li>Added custom category editor to manage order and naming of custom categories in custom grids</li>
@@ -7,10 +68,11 @@
 	<div class="bugfix"><strong style="font-weight:700">BUGFIX</strong></div>
 	<ul>
 		<li>Editing Posts and Custom items still showing edited sign after saving them.</li>
-		<li>Fixed FancyBox Thumbnail conflicts with Essential Lightbox's Thumbnails</li>
+		<li>Fixed FancyBox Thumbnail conflicts with Essential Lightbox'S Thumbnails</li>
 		<li>Fixed an issue where unchecking Post types or Sort Orders did not remove visually the selected states</li>		
 		<li>Fixed a bug which did not allow to remove Page Sources from the list any more, once they have been added</li>
 	</ul>
+
 	<div class="change"><strong style="font-weight:700">CHANGES</strong></div>
 	<ul>
 		<li>Update some missing styles for Page selection in grid editor</li>

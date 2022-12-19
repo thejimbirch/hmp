@@ -357,6 +357,7 @@ if(!class_exists('ESGColorpicker')){
 		 * get rgb values
 		 */
 		public static function rgbValues($values, $num){
+			if(empty($values)) return $values;
 			$values = substr( $values, strpos($values, '(') + 1  , strpos($values, ')')-strpos($values, '(') - 1 );
 			$values = explode(",", $values);
 			
@@ -564,11 +565,15 @@ if(!class_exists('ESGColorpicker')){
 			
 			$hex = trim(str_replace('#', '' , $hex));
 			
-			$rgb = $opacity!==false ? 'rgba' : 'rgb';  
-			$r = hexdec(substr($hex,0,2));
-	      	$g = hexdec(substr($hex,2,2));
-	      	$b = hexdec(substr($hex,4,2));
-	      	
+			$rgb = $opacity!==false ? 'rgba' : 'rgb';
+			$r = 0;
+			$g = 0;
+			$b = 0;
+			if(strlen($hex) >= 6){
+				$r = hexdec(substr($hex,0,2));
+				$g = hexdec(substr($hex,2,2));
+				$b = hexdec(substr($hex,4,2));
+	      	}
 	      	$color = $rgb . "(" . $r . "," . $g . "," . $b ;
 
 	      	if($opacity!==false){

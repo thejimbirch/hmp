@@ -48,8 +48,7 @@ class WPSEO_Premium_Upsell_Admin_Block {
 	 * @return void
 	 */
 	public function render() {
-		$page = filter_input( INPUT_GET, 'page' );
-		$url  = add_query_arg( [ 'screen' => $page ], WPSEO_Shortlinker::get( 'https://yoa.st/17h' ) );
+		$url = WPSEO_Shortlinker::get( 'https://yoa.st/17h' );
 
 		$arguments = [
 			'<strong>' . esc_html__( 'Multiple keyphrases', 'wordpress-seo' ) . '</strong>: ' . esc_html__( 'Increase your SEO reach', 'wordpress-seo' ),
@@ -70,7 +69,7 @@ class WPSEO_Premium_Upsell_Admin_Block {
 			'<span aria-hidden="true" class="yoast-button-upsell__caret"></span>';
 
 		$upgrade_button = sprintf(
-			'<a id="%1$s" class="yoast-button-upsell" href="%2$s" target="_blank">%3$s</a>',
+			'<a id="%1$s" class="yoast-button-upsell" data-action="load-nfd-ctb" data-ctb-id="57d6a568-783c-45e2-a388-847cff155897" href="%2$s" target="_blank">%3$s</a>',
 			esc_attr( 'wpseo-' . $this->identifier . '-popup-button' ),
 			esc_url( $url ),
 			$button_text

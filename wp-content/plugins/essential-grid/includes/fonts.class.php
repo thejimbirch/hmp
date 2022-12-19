@@ -108,6 +108,7 @@ if(!class_exists('ThemePunch_Fonts')) {
 		public function get_all_fonts(){
 		
 			$fonts = get_option('tp-google-fonts', array());
+			if(empty($fonts)) $fonts = array();
 			
 			return $fonts;
 		}

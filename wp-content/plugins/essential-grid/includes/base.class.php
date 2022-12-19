@@ -127,15 +127,19 @@ class Essential_Grid_Base {
         }
 
         $hex = str_replace("#", "", $hex);
-
+		$r = 0;
+		$g = 0;
+		$b = 0;
         if(strlen($hex) == 3) {
             $r = hexdec(substr($hex,0,1).substr($hex,0,1));
             $g = hexdec(substr($hex,1,1).substr($hex,1,1));
             $b = hexdec(substr($hex,2,1).substr($hex,2,1));
         } else {
-            $r = hexdec(substr($hex,0,2));
-            $g = hexdec(substr($hex,2,2));
-            $b = hexdec(substr($hex,4,2));
+			if(strlen($hex) >= 6){
+				$r = hexdec(substr($hex,0,2));
+				$g = hexdec(substr($hex,2,2));
+				$b = hexdec(substr($hex,4,2));
+			}
         }
 
         return apply_filters('essgrid_hex2rgba', 'rgba('.$r.', '.$g.', '.$b.', '.$transparency.')', $hex, $transparency);
@@ -716,7 +720,8 @@ class Essential_Grid_Base {
 	 * set basic height of Masonry Content if Empty
 	 */
 	public static function set_basic_mascontent_height($mascontent_height){
-
+		if(!is_array($mascontent_height)) $mascontent_height = (array)$mascontent_height;
+		
 		if(!isset($mascontent_height[0]) || intval($mascontent_height[0]) == 0) $mascontent_height[0] = 0;
 		if(!isset($mascontent_height[1]) || intval($mascontent_height[1]) == 0) $mascontent_height[1] = 0;
 		if(!isset($mascontent_height[2]) || intval($mascontent_height[2]) == 0) $mascontent_height[2] = 0;
@@ -732,7 +737,8 @@ class Essential_Grid_Base {
 	 * set basic columns width if empty
 	 */
 	public static function set_basic_colums_width($columns_width){
-
+		if(!is_array($columns_width)) $columns_width = (array)$columns_width;
+		
 		if(!isset($columns_width[0]) || intval($columns_width[0]) == 0) $columns_width[0] = 1400;
 		if(!isset($columns_width[1]) || intval($columns_width[1]) == 0) $columns_width[1] = 1170;
 		if(!isset($columns_width[2]) || intval($columns_width[2]) == 0) $columns_width[2] = 1024;
@@ -1219,7 +1225,7 @@ class Essential_Grid_Base {
 
 		if(!empty($arrAddition) && is_array($arrAddition)){
 			foreach($arrAddition as $han => $val){
-				if(strtolower(substr($val, 0, 5)) == 'array') {
+				if(strlen($val) >= 5 && strtolower(substr($val, 0, 5)) == 'array') {
 					$val = explode(',', str_replace(array('(', ')'), '', substr($val, 5)));
 					$arrAddition[$han] = $val;
 				}
@@ -1575,31 +1581,37 @@ class Essential_Grid_Base {
 	/**
 	 * Receive all Posts that are related to the current post
 	 * @since: 1.2.0
+	 * changed: 3.0.8 (added distinction between categories or tags or both)
 	 */
-	public static function get_related_posts($max_posts = 20){
+	public static function get_related_posts($max_posts = 20, $related_by = "both"){
 		$my_posts = array();
 
 		$post_id = get_the_ID();
 
-		$tags_string = '';
-		$post_tags = get_the_tags();
-		if ($post_tags) {
-			foreach ($post_tags as $post_tag) {
-				$tags_string .= $post_tag->slug . ',';
+		if( in_array( $related_by, array( "both", "tags" ) ) ){
+			$tags_string = '';
+			$post_tags = get_the_tags();
+			if ($post_tags) {
+				foreach ($post_tags as $post_tag) {
+					$tags_string .= $post_tag->slug . ',';
+				}
 			}
+
+			$query = array(
+							'exclude' => $post_id,
+							'numberposts' => $max_posts,
+							'tag' => $tags_string
+						);
+
+			$get_relateds = apply_filters('essgrid_get_related_posts', $query, $post_id);
+			$tag_related_posts = get_posts($get_relateds);
+		}
+		else {
+			$tag_related_posts = array();
 		}
 
-		$query = array(
-						'exclude' => $post_id,
-						'numberposts' => $max_posts,
-						'tag' => $tags_string
-					  );
 
-		$get_relateds = apply_filters('essgrid_get_related_posts', $query, $post_id);
-		$tag_related_posts = get_posts($get_relateds);
-
-
-		if(count($tag_related_posts) < $max_posts){
+		if( $related_by == "categories" || ( $related_by == "both" &&  count( $tag_related_posts ) < $max_posts ) ){
 			$ignore = array();
 			foreach($tag_related_posts as $tag_related_post){
 				$ignore[] = $tag_related_post->ID;
@@ -2396,21 +2408,23 @@ class Essential_Grid_Base {
  				}
  			}
 			else{
-				$blocks = parse_blocks( $content );
-		 		if(!empty($blocks)){
-		 			foreach($blocks as $block){
-		 				if('core/gallery' === $block['blockName'] && isset($block['attrs']['ids']) && is_array($block['attrs']['ids'])){
-		 					$images = array();
-		 					foreach($block['attrs']['ids'] as $img){
-		 						$t_img = wp_get_attachment_image_src($img, $source);
-		 						if($t_img !== false){
-		 							$images[] = $t_img[0];
-		 						}
-		 					}
-		 					$ret = $images;
-		 				}
-		 			}
-		 		}
+				if (function_exists('parse_blocks')) { // KRISZTIAN CHANGE - PLEASE DOUBLE CHECK- FALLBACK
+					$blocks = parse_blocks( $content );
+			 		if(!empty($blocks)){
+			 			foreach($blocks as $block){
+			 				if('core/gallery' === $block['blockName'] && isset($block['attrs']['ids']) && is_array($block['attrs']['ids'])){
+			 					$images = array();
+			 					foreach($block['attrs']['ids'] as $img){
+			 						$t_img = wp_get_attachment_image_src($img, $source);
+			 						if($t_img !== false){
+			 							$images[] = $t_img[0];
+			 						}
+			 					}
+			 					$ret = $images;
+			 				}
+			 			}
+			 		}
+			 	}
 			}
 
  		}
@@ -2783,5 +2797,12 @@ class Essential_Grid_Base {
 	  	return $x_display;
 	}
 
+	/**
+	 * sanitizes utf8 characters to unicode
+ 	 * @since: 3.0.9
+	 */
+	public static function sanitize_utf8_to_unicode($string){
+		return sanitize_key(json_encode($string));
+	}
 }
 ?>

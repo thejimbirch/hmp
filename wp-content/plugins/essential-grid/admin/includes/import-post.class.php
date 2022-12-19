@@ -68,9 +68,12 @@ if(!class_exists('PunchPost')) {
 					
 					$terms = array();
 					$terms_array = explode(',', $this->TP_terms);
-					foreach($terms_array as $singleterm){
-						$term = get_term_by('slug', $singleterm, $cat);	
-						$terms[]=$term->term_id;
+					if(!empty($terms_array)){
+						foreach($terms_array as $singleterm){
+							$term = get_term_by('slug', $singleterm, $cat);
+							if(empty($term) || !isset($term->term_id)) continue;
+							$terms[]=$term->term_id;
+						}
 					}
 					wp_set_post_terms( $this->TP_current_post_id, $terms, $cat);
 					

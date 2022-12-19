@@ -68,7 +68,7 @@ $offset = ( $pagenum - 1 ) * $limit;
 $cur_offset = 0;
 
 ?>
-	<h2 class="topheader"><?php _e('Overview', EG_TEXTDOMAIN); ?><a target="_blank" class="esg-help-button esg-btn esg-red" href="http://essential.themepunch.com/documentation"><i class="material-icons">help</i><?php _e('Help Center', EG_TEXTDOMAIN); ?></a></h2>
+	<h2 class="topheader"><?php _e('Overview', EG_TEXTDOMAIN); ?><a target="_blank" class="esg-help-button esg-btn esg-red" href="https://www.themepunch.com/support-center/essential-grid/#documentation"><i class="material-icons">help</i><?php _e('Help Center', EG_TEXTDOMAIN); ?></a></h2>
 	<div class="div35"></div>
 	<div style="position: relative">
 		<?php

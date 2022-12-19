@@ -53,8 +53,10 @@ if ( $appt_id ):
 		update_post_meta( $appt_id, '_appointment_timestamp', $timestamp );
 		update_post_meta( $appt_id, '_appointment_timeslot', $timeslot );
 
-		update_user_meta( $user_id, 'booked_phone', $phone );
-		wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name, 'user_email' => $email, 'user_login' => $email, 'display_name' => $first_name . ( $last_name ? ' ' . $last_name : '' ) ) );
+		if ( !user_can( $user_id, 'manage_options' ) ):
+			update_user_meta( $user_id, 'booked_phone', $phone );
+			wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name, 'user_email' => $email, 'user_login' => $email, 'display_name' => $first_name . ( $last_name ? ' ' . $last_name : '' ) ) );
+		endif;
 
 	endif;
 

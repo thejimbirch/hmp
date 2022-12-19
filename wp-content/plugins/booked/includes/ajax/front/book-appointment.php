@@ -510,3 +510,5 @@ else:
 	echo 'error###' . $error_message;
 
 endif;
+
+session_write_close();

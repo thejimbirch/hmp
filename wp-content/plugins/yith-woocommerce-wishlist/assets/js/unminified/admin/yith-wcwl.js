@@ -164,7 +164,7 @@ jQuery( function( $ ) {
                         return;
                     }
 
-                    if( field.is( 'select' ) && ! field.find( 'option[value="' + v + '"]' ).length ){
+                    if( field.is( 'select' ) && v && ! field.find( 'option[value="' + v + '"]' ).length ){
                         field.append( '<option value="' + v + '" selected="selected">' + v + ' </option>' );
                     }
                     else {
@@ -292,7 +292,7 @@ jQuery( function( $ ) {
             }
 
             updatePreviewXHR = $.ajax( {
-                url: ajaxurl + '?action=preview_promotion_email',
+                url: ajaxurl + '?action=preview_promotion_email&_wpnonce=' + yith_wcwl.nonce.preview_promotion_email,
                 data: modal.find('form').serialize(),
                 method: 'POST',
                 beforeSend: function(){
@@ -316,15 +316,15 @@ jQuery( function( $ ) {
             return {
                 template: 'yith-wcwl-promotion-wizard',
                 template_data: function( el ){
-                    var data;
+                    var data = el.data( 'draft' );
 
-                    if( el.hasClass( 'restore-draft' ) ) {
-                        data = el.data( 'draft' );
-                    }
-                    else{
+                    if( ! data ) {
                         data = $.extend( data, {
-                            product_id: el.data('product_id'),
-                            user_id   : el.data('user_id')
+                            product_id  : el.data('product_id'),
+                            user_id     : el.data('user_id'),
+                            content_html: yith_wcwl.promotion.content_html,
+                            content_text: yith_wcwl.promotion.content_html,
+                            coupon      : false,
                         } );
                     }
 
@@ -350,7 +350,7 @@ jQuery( function( $ ) {
                         }
 
                         $.ajax({
-                            url: ajaxurl + '?action=calculate_promotion_email_receivers',
+                            url: ajaxurl + '?action=calculate_promotion_email_receivers&_wpnonce=' + yith_wcwl.nonce.calculate_promotion_email_receivers,
                             data: modal.find('form').serialize(),
                             method: 'post',
                             beforeSend: function(){

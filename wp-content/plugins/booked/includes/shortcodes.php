@@ -173,7 +173,7 @@ class BookedShortcodes {
 						'order'			=> 'ASC'
 					);
 					if (!get_option('booked_hide_default_calendar')): $args['show_option_all'] = esc_html__('Default Calendar','booked'); endif;
-					echo '<div class="booked-calendarSwitcher '.$atts['style'].'"><p><i class="booked-icon booked-icon-calendar"></i>' . str_replace( "\n", '', wp_dropdown_categories( $args ) ) . '</p></div>';
+					echo '<div class="booked-calendarSwitcher '.$atts['style'].'"><p><i class="fa-solid fa-calendar-days"></i>' . str_replace( "\n", '', wp_dropdown_categories( $args ) ) . '</p></div>';
 				endif;
 
 				if (get_option('booked_hide_default_calendar') && $atts['switcher'] && !$atts['calendar'] && !empty($calendars)):
@@ -315,16 +315,16 @@ class BookedShortcodes {
 						echo '<span class="appt-block bookedClearFix '.(!$historic ? $status_class : 'approved').'" data-appt-id="'.$appt['post_id'].'">';
 							if (!$historic):
 								if ($appointment_default_status !== 'publish' && $appt['status'] !== 'future' || $appointment_default_status == 'publish' && $status_class == 'pending'):
-									echo '<span class="status-block">'.($status_class == 'pending' ? '<i class="booked-icon booked-icon-radio-unchecked"></i>' : '<i class="booked-icon booked-icon-radio-checked"></i>').'&nbsp;&nbsp;'.$status.'</span>';
+									echo '<span class="status-block">'.($status_class == 'pending' ? '<i class="fa-solid fa-circle"></i>' : '<i class="fa-solid fa-circle-dot"></i>').'&nbsp;&nbsp;'.$status.'</span>';
 								endif;
 							endif;
-							echo (!empty($appt['calendar_id']) ? '<i class="booked-icon booked-icon-calendar"></i><strong>'.esc_html__('Calendar','booked').':</strong> '.$appt['calendar_id'][0]->name.'<br>' : '');
+							echo (!empty($appt['calendar_id']) ? '<i class="fa-solid fa-calendar-days"></i><strong>'.esc_html__('Calendar','booked').':</strong> '.$appt['calendar_id'][0]->name.'<br>' : '');
 
-							echo '<i class="booked-icon booked-icon-clock"></i>'.($ts_title ? '<strong>'.$ts_title.':</strong>&nbsp;&nbsp;' : '').$day_name.$date_display.'&nbsp;&nbsp;' . $timeslotText;
+							echo '<i class="fa-solid fa-clock"></i>'.($ts_title ? '<strong>'.$ts_title.':</strong>&nbsp;&nbsp;' : '').$day_name.$date_display.'&nbsp;&nbsp;' . $timeslotText;
 
 							do_action('booked_shortcode_appointments_additional_information', $appt['post_id']);
 
-							echo ($cf_meta_value ? '<br><i class="booked-icon booked-icon-info"></i><a href="#" class="booked-show-cf">'.esc_html__('Additional information','booked').'</a><div class="cf-meta-values-hidden">'.$cf_meta_value.'</div>' : '');
+							echo ($cf_meta_value ? '<br><i class="fa-solid fa-circle-info"></i><a href="#" class="booked-show-cf">'.esc_html__('Additional information','booked').'</a><div class="cf-meta-values-hidden">'.$cf_meta_value.'</div>' : '');
 
 							if (!$historic):
 
@@ -384,9 +384,9 @@ class BookedShortcodes {
 				<div id="booked-page-form">
 
 					<ul class="booked-tabs login bookedClearFix">
-						<li<?php if ( !isset($_POST['booked_reg_submit'] ) ) { ?> class="active"<?php } ?>><a href="#login"><i class="booked-icon booked-icon-lock"></i><?php esc_html_e('Sign In','booked'); ?></a></li>
-						<?php if ( get_option('users_can_register') ): ?><li<?php if ( isset($_POST['booked_reg_submit'] ) ) { ?> class="active"<?php } ?>><a href="#register"><i class="booked-icon booked-icon-pencil"></i><?php esc_html_e('Register','booked'); ?></a></li><?php endif; ?>
-						<li><a href="#forgot"><i class="booked-icon booked-icon-question-circle"></i><?php esc_html_e('Forgot Password','booked'); ?></a></li>
+						<li<?php if ( !isset($_POST['booked_reg_submit'] ) ) { ?> class="active"<?php } ?>><a href="#login"><i class="fa-solid fa-lock"></i><?php esc_html_e('Sign In','booked'); ?></a></li>
+						<?php if ( get_option('users_can_register') ): ?><li<?php if ( isset($_POST['booked_reg_submit'] ) ) { ?> class="active"<?php } ?>><a href="#register"><i class="fa-solid fa-pencil"></i><?php esc_html_e('Register','booked'); ?></a></li><?php endif; ?>
+						<li><a href="#forgot"><i class="fa-solid fa-circle-question"></i><?php esc_html_e('Forgot Password','booked'); ?></a></li>
 					</ul>
 
 					<div id="profile-login" class="booked-tab-content">

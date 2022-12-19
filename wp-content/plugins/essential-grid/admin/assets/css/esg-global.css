@@ -363,6 +363,11 @@ STEP 3
 	z-index: 100102 !important;
 }
 
+.ui-dialog.verytopdialog {
+	z-index: 100202 !important;
+}
+
+
 
 /******************************
 	-	BACKEND STYLING	-

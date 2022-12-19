@@ -62,7 +62,8 @@ function booked_get_kb_article( $id ) {
 		set_transient( 'booked_kb_article_' . $id, $kb_article, 86400 );
 	endif;
 
-	$output = '<a href="https://boxystudio.ticksy.com/article/' . $id . '/" target="_blank" class="welcome-icon welcome-learn-more">' . esc_html( $kb_article['article-data']['article_title'] ) . '&nbsp;&nbsp;<i class="booked-icon booked-icon-sign-out"></i></a>';
+	$output = '<a href="https://boxystudio.ticksy.com/article/' . $id . '/" target="_blank" class="welcome-icon welcome-learn-more">' . esc_html( $kb_article['article-data']['article_title'] ) . '&nbsp;&nbsp;
+	</a>';
 	return $output;
 
 }
@@ -439,8 +440,8 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 	// Appointments Array
 	// [DAY] => [POST_ID] => [TIMESTAMP/STATUS]
 
-	?><table class="booked-calendar<?php echo ($booked_pa_active ? ' booked-pa-active' : ''); ?>"<?php echo ($calendar_id ? ' data-calendar-id="'.$calendar_id.'"' : ''); ?><?php echo (!$force_calendar ? ' data-calendar-date="'.$currentMonth.'"' : ''); ?>>
-		<thead>
+	?><div class="booked-calendar<?php echo ($booked_pa_active ? ' booked-pa-active' : ''); ?>"<?php echo ($calendar_id ? ' data-calendar-id="'.$calendar_id.'"' : ''); ?><?php echo (!$force_calendar ? ' data-calendar-date="'.$currentMonth.'"' : ''); ?>>
+		<div class="bc-head">
 
 			<?php
 
@@ -452,11 +453,11 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 
 			?>
 
-			<tr>
-				<th colspan="<?php if (!$hide_weekends): ?>7<?php else: ?>5<?php endif; ?>">
-					<?php if ($monthShown != $currentMonth): ?><a href="#" data-goto="<?php echo $prev_month; ?>" class="page-left"><i class="booked-icon booked-icon-arrow-left"></i></a><?php endif; ?>
+			<div class="bc-row top">
+				<div class="bc-col">
+					<?php if ($monthShown != $currentMonth): ?><a href="#" data-goto="<?php echo $prev_month; ?>" class="page-left"><i class="fa-solid fa-arrow-left"></i></a><?php endif; ?>
 					<span class="calendarSavingState">
-						<i class="booked-icon booked-icon-spinner-clock booked-icon-spin"></i>
+						<i class="fa-solid fa-circle-notch fa-spin"></i>
 					</span>
 					<span class="monthName">
 						<?php echo date_i18n("F Y", strtotime($year.'-'.$month.'-01')); ?>
@@ -464,21 +465,21 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 							<a href="#" class="backToMonth" data-goto="<?php echo $currentMonth; ?>"><?php esc_html_e('Back to','booked'); ?> <?php echo date_i18n('F',strtotime($currentMonth)); ?></a>
 						<?php endif; ?>
 					</span>
-					<?php if (!$no_next_link): ?><a href="#" data-goto="<?php echo $next_month; ?>" class="page-right"><i class="booked-icon booked-icon-arrow-right"></i></a><?php endif; ?>
-				</th>
-			</tr>
-			<tr class="days">
-				<?php if ($first_day_of_week == 7 && !$hide_weekends): echo '<th>' . date_i18n( 'D', strtotime('Sunday') ) . '</th>'; endif; ?>
-				<th><?php echo date_i18n( 'D', strtotime('Monday') ); ?></th>
-				<th><?php echo date_i18n( 'D', strtotime('Tuesday') ); ?></th>
-				<th><?php echo date_i18n( 'D', strtotime('Wednesday') ); ?></th>
-				<th><?php echo date_i18n( 'D', strtotime('Thursday') ); ?></th>
-				<th><?php echo date_i18n( 'D', strtotime('Friday') ); ?></th>
-				<?php if (!$hide_weekends): ?><th><?php echo date_i18n( 'D', strtotime('Saturday') ); ?></th><?php endif; ?>
-				<?php if ($first_day_of_week == 1 && !$hide_weekends): echo '<th>'. date_i18n( 'D', strtotime('Sunday') ) .'</th>'; endif; ?>
-			</tr>
-		</thead>
-		<tbody><?php
+					<?php if (!$no_next_link): ?><a href="#" data-goto="<?php echo $next_month; ?>" class="page-right"><i class="fa-solid fa-arrow-right"></i></a><?php endif; ?>
+				</div>
+			</div>
+			<div class="bc-row days">
+				<?php if ($first_day_of_week == 7 && !$hide_weekends): echo '<div class="bc-col">' . date_i18n( 'D', strtotime('Sunday') ) . '</div>'; endif; ?>
+				<div class="bc-col"><?php echo date_i18n( 'D', strtotime('Monday') ); ?></div>
+				<div class="bc-col"><?php echo date_i18n( 'D', strtotime('Tuesday') ); ?></div>
+				<div class="bc-col"><?php echo date_i18n( 'D', strtotime('Wednesday') ); ?></div>
+				<div class="bc-col"><?php echo date_i18n( 'D', strtotime('Thursday') ); ?></div>
+				<div class="bc-col"><?php echo date_i18n( 'D', strtotime('Friday') ); ?></div>
+				<?php if (!$hide_weekends): ?><div class="bc-col"><?php echo date_i18n( 'D', strtotime('Saturday') ); ?></div><?php endif; ?>
+				<?php if ($first_day_of_week == 1 && !$hide_weekends): echo '<div class="bc-col">'. date_i18n( 'D', strtotime('Sunday') ) .'</div>'; endif; ?>
+			</div>
+		</div>
+		<div class="bc-body"><?php
 
 			$today_date = date_i18n('Y',$local_time).'-'.date_i18n('m',$local_time).'-'.date_i18n('j',$local_time);
 			$days = date_i18n("t",strtotime($year.'-'.$month.'-01'));	 	// Days in current month
@@ -510,7 +511,7 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 			if($start > 5){ $rows = 6; } else { $rows = 5; }
 
 			for($i = 1; $i <= $rows; $i++){
-				echo '<tr class="week">';
+				echo '<div class="bc-row week">';
 				$day_count = 0;
 				for($x = 1; $x <= 7; $x++){
 
@@ -652,9 +653,9 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 
 						$day_count++;
 
-						$html = '<td data-date="'.$check_year.'-'.$check_month.'-'.$date.'" class="'.implode(' ',$classes).'">';
+						$html = '<div data-date="'.$check_year.'-'.$check_month.'-'.$date.'" class="bc-col '.implode(' ',$classes).'">';
 						$html .= '<span class="date'.(!$hide_available_count && $appointments_left > 0 && !in_array('prev-date',$classes) && !in_array('blur',$classes) ? ' tooltipster" title="'.sprintf( _n('%d Available','%d Available',$appointments_left,'booked'),$appointments_left) : (!$hide_available_count && !$appointments_left && $booked_pa_active && !in_array('prev-date',$classes) && !in_array('blur',$classes) ? ' tooltipster" title="'.esc_html__('None Available','booked').'"' : '')).'"><span class="number">'. $date .'</span></span>';
-						$html .= '</td>';
+						$html .= '</div>';
 
 						$combined_date = $year.'-'.$check_month.'-'.$date;
 						echo apply_filters('booked_fe_single_date',$html,$combined_date,$classes);
@@ -664,10 +665,10 @@ function booked_fe_calendar($year = false,$month = false,$calendar_id = false,$f
 					$counter++;
 					$class = '';
 				}
-				echo '</tr>';
+				echo '</div>';
 			} ?>
-		</tbody>
-	</table><?php
+		</div>
+	</div><?php
 
 	do_action('booked_fe_calendar_after');
 
@@ -865,7 +866,7 @@ function booked_fe_calendar_date_content($date,$calendar_id = false){
 					if ($hide_unavailable_timeslots && !$available):
 						$html = '';
 					else:
-						$button_text = (!$spots_available || !$available ? esc_html__('Unavailable','booked') : esc_html__('Book Appointment','booked'));
+						$button_text = (!$spots_available || !$available ? esc_html__('Unavailable','booked') : esc_html( _x('Book Appointment','Book a Single Appointment', 'booked') ) );
 						$html = '<div class="timeslot bookedClearFix'.($title && $only_titles == true ? ' booked-hide-time' : '').($hide_available_count || !$available ? ' timeslot-count-hidden' : '').(!$available ? ' timeslot-unavailable' : '').($title ? ' has-title ' : '').'">';
 
 							$html .= '<span class="timeslot-time'.($public_appointments ? ' booked-public-appointments' : '').'">';
@@ -876,7 +877,7 @@ function booked_fe_calendar_date_content($date,$calendar_id = false){
 									$html .= '<span class="timeslot-title">' . esc_html($title) . '</span>';
 								}
 
-								$html .= '<span class="timeslot-range"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . $timeslotText . '</span>';
+								$html .= '<span class="timeslot-range"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . $timeslotText . '</span>';
 
 								if (!$hide_available_count):
 									$html .= '<span class="spots-available'.($spots_available == 0 ? ' empty' : '').'">';
@@ -935,7 +936,7 @@ function booked_fe_calendar_date_content($date,$calendar_id = false){
 
 		$appt_list_html = ob_get_clean();
 
-		echo '<h2><span>' . sprintf( _n( esc_html__( 'Available Appointment on %s', 'booked' ), esc_html__( 'Available Appointments on %s', 'booked' ), $total_available ), '</span><strong>'.$date_display.'</strong><span>') . '</span></h2>';
+		echo '<h2><span>' . sprintf( _n( esc_html(_x( 'Available Appointment on %s', 'Single Appointment', 'booked' )), esc_html(_x( 'Available Appointments on %s', 'Multiple Appointments', 'booked' )), $total_available ), '</span><strong>'.$date_display.'</strong><span>') . '</span></h2>';
 		echo $appt_list_html;
 
 	echo '</div>';
@@ -1024,9 +1025,11 @@ function booked_fe_appointment_list_content($date,$calendar_id = false,$force_da
 	$earliest_date = $new_earliest_date;
 
 	do_action('booked_fe_calendar_date_before');
+	
+	
 
 	echo '<div class="booked-appt-list" data-list-date="'.$date.'" data-min-date="'.($prevent_before ? date_i18n('Y-m-d',strtotime($prevent_before)) : $earliest_date).'" data-max-date="'.($prevent_after ? date_i18n('Y-m-d',strtotime($prevent_after)) : false).'">';
-
+		
 		/*
 		Set some variables
 		*/
@@ -1104,13 +1107,17 @@ function booked_fe_appointment_list_content($date,$calendar_id = false,$force_da
 
 		echo '<div class="booked-list-view-nav" data-calendar-id="'.$calendar_id.'">';
 			if ($showing_prev):
-				echo '<button data-date="'.date_i18n('Y-m-d',strtotime($prev_day)).'" class="booked-list-view-date-prev bb-small"><i class="booked-icon booked-icon-arrow-left"></i>&nbsp;&nbsp;'.esc_html__('Previous','booked').'</button>';
+				echo '<button data-date="'.date_i18n('Y-m-d',strtotime($prev_day)).'" class="booked-list-view-date-prev bb-small"><i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;'.esc_html__('Previous','booked').'</button>';
 			endif;
 			if ($showing_next):
-				echo '<button data-date="'.date_i18n('Y-m-d',strtotime($next_day)).'" class="booked-list-view-date-next bb-small">'.esc_html__('Next','booked').'&nbsp;&nbsp;<i class="booked-icon booked-icon-arrow-right"></i></button>';
+				echo '<button data-date="'.date_i18n('Y-m-d',strtotime($next_day)).'" class="booked-list-view-date-next bb-small">'.esc_html__('Next','booked').'&nbsp;&nbsp;<i class="fa-solid fa-arrow-right"></i></button>';
 			endif;
-			echo '<span class="booked-datepicker-wrap"><input data-min-date="'.$earliest_date.'" class="booked_list_date_picker" value="'.date_i18n('Y-m-d',strtotime($date)).'" type="hidden"><a href="#" class="booked_list_date_picker_trigger"><i class="booked-icon booked-icon-calendar"></i></a></span>';
+			echo '<span class="booked-datepicker-wrap"><input data-min-date="'.$earliest_date.'" class="booked_list_date_picker" value="'.date_i18n('Y-m-d',strtotime($date)).'" type="hidden"><a href="#" class="booked_list_date_picker_trigger"><i class="fa-solid fa-calendar-days"></i></a></span>';
 		echo '</div>';
+		
+		$appt_list_button_html = ob_get_clean();
+		
+		ob_start();
 
 		/*
 		Get today's default timeslots
@@ -1232,7 +1239,7 @@ function booked_fe_appointment_list_content($date,$calendar_id = false,$force_da
 					if ($hide_unavailable_timeslots && !$available):
 						$html = '';
 					else:
-						$button_text = (!$spots_available || !$available ? esc_html__('Unavailable','booked') : esc_html__('Book Appointment','booked'));
+						$button_text = (!$spots_available || !$available ? esc_html__('Unavailable','booked') : esc_html( _x('Book Appointment','Book a Single Appointment', 'booked') ));
 						$html = '<div class="timeslot bookedClearFix'.($title && $only_titles == true ? ' booked-hide-time' : '').($hide_available_count || !$available ? ' timeslot-count-hidden' : '').(!$available ? ' timeslot-unavailable' : '').($title ? ' has-title ' : '').'">';
 							$html .= '<span class="timeslot-time'.($public_appointments ? ' booked-public-appointments' : '').'">';
 
@@ -1242,7 +1249,7 @@ function booked_fe_appointment_list_content($date,$calendar_id = false,$force_da
 									$html .= '<span class="timeslot-title">' . esc_html($title) . '</span>';
 								}
 
-								$html .= '<span class="timeslot-range"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . $timeslotText . '</span>';
+								$html .= '<span class="timeslot-range"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . $timeslotText . '</span>';
 								if (!$hide_available_count): $html .= '<span class="spots-available'.($spots_available == 0 ? ' empty' : '').'">'.sprintf(_n('%d space available','%d spaces available',$spots_available,'booked'),$spots_available).'</span>'; endif;
 								if ($public_appointments && !empty($appts_in_this_timeslot)):
 									$html .= '<span class="booked-public-appointment-title">'._n('Appointments in this time slot:','Appointments in this time slot:',count($appts_in_this_timeslot),'booked').'</span>';
@@ -1285,9 +1292,13 @@ function booked_fe_appointment_list_content($date,$calendar_id = false,$force_da
 
 		$appt_list_html = ob_get_clean();
 
-		echo '<h2'.(!$showing_prev ? ' class="booked-no-prev"' : '').'><span>'.sprintf(_n('Available Appointment on %s','Available Appointments on %s',$total_available,'booked'),'</span><strong>'.$date_display.'</strong>').'</h2>';
-		echo $appt_list_html;
+		echo '<div class="booked-appt-list-header">';
+			echo '<h2'.(!$showing_prev ? ' class="booked-no-prev"' : '').'><span>'.sprintf(_n('Available Appointment on %s','Available Appointments on %s',$total_available,'booked'),'</span><strong>'.$date_display.'</strong>').'</h2>';
+			echo $appt_list_button_html;
+		echo '</div>';
 
+		echo $appt_list_html;
+		
 	echo '</div>';
 
 	do_action('booked_fe_calendar_date_after');
@@ -1479,6 +1490,17 @@ function booked_custom_fields($calendar_id = false){
 		$temp_count = 0;
 
 		$data_attributes = ' data-calendar-id="' . intval($calendar_id) . '" ';
+		$required_fields = [];
+		
+		foreach($custom_fields as $field):
+	
+			$field_parts = explode('---',$field['name']);
+			$field_type = $field_parts[0];
+			if ( $field_type == 'required' && isset( $field_parts[1] ) && isset( $field['value'] ) && $field['value'] ):
+				$required_fields[] = $field_parts[1];
+			endif;
+		
+		endforeach;
 
 		foreach($custom_fields as $field):
 
@@ -1488,7 +1510,7 @@ function booked_custom_fields($calendar_id = false){
 			$field_type = $field_parts[0];
 			$end_of_string = explode('___',$field_parts[1]);
 			$numbers_only = $end_of_string[0];
-			$is_required = (isset($end_of_string[1]) ? true : false);
+			$is_required = in_array( $numbers_only, $required_fields );
 
 			if ($look_for_subs):
 
@@ -1544,7 +1566,7 @@ function booked_custom_fields($calendar_id = false){
 				case 'single-line-text-label' :
 
 					?><div class="field">
-						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk booked-icon booked-icon-required"></i><?php endif; ?></label>
+						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk fa-solid fa-asterisk"></i><?php endif; ?></label>
 						<input id="booked-textfield-<?php echo esc_attr($field['name']); ?>" <?php echo $data_attributes ?> <?php if ($is_required): echo ' required="required"'; endif; ?> type="text" name="<?php echo esc_attr($field['name']); ?>" value="" class="large textfield" />
 					</div><?php
 
@@ -1553,7 +1575,7 @@ function booked_custom_fields($calendar_id = false){
 				case 'paragraph-text-label' :
 
 					?><div class="field">
-						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk booked-icon booked-icon-required"></i><?php endif; ?></label>
+						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk fa-solid fa-asterisk"></i><?php endif; ?></label>
 						<textarea id="booked-textarea-<?php echo esc_attr($field['name']); ?>" <?php echo $data_attributes ?> <?php if ($is_required): echo ' required="required"'; endif; ?> name="<?php echo esc_attr($field['name']); ?>"></textarea>
 					</div><?php
 
@@ -1562,7 +1584,7 @@ function booked_custom_fields($calendar_id = false){
 				case 'checkboxes-label' :
 
 					?><div class="field">
-						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk booked-icon booked-icon-required"></i><?php endif; ?></label>
+						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk fa-solid fa-asterisk"></i><?php endif; ?></label>
 						<input id="booked-checkbox-label-<?php echo esc_attr($field['name']); ?>" <?php echo $data_attributes ?> <?php if ($is_required): echo ' required="required"'; endif; ?> type="hidden" name="<?php echo esc_attr($field['name']); ?>" /><?php
 					$look_for_subs = 'checkboxes';
 
@@ -1571,7 +1593,7 @@ function booked_custom_fields($calendar_id = false){
 				case 'radio-buttons-label' :
 
 					?><div class="field">
-						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk booked-icon booked-icon-required"></i><?php endif; ?></label>
+						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk fa-solid fa-asterisk"></i><?php endif; ?></label>
 						<input id="booked-radio-label-<?php echo esc_attr($field['name']); ?>" <?php echo $data_attributes ?> <?php if ($is_required): echo ' required="required"'; endif; ?> type="hidden" name="<?php echo esc_attr($field['name']); ?>" /><?php
 					$look_for_subs = 'radio-buttons';
 
@@ -1580,7 +1602,7 @@ function booked_custom_fields($calendar_id = false){
 				case 'drop-down-label' :
 
 					?><div class="field">
-						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk booked-icon booked-icon-required"></i><?php endif; ?></label>
+						<label class="field-label"><?php echo $field['value']; ?><?php if ($is_required): ?><i class="required-asterisk fa-solid fa-asterisk"></i><?php endif; ?></label>
 						<input id="booked-select-label-<?php echo esc_attr($field['name']); ?>" type="hidden" name="<?php echo esc_attr($field['name']); ?>" />
 						<select id="booked-select-<?php echo esc_attr($field['name']); ?>" <?php echo $data_attributes ?> <?php if ($is_required): echo ' required="required"'; endif; ?> name="<?php echo esc_attr($field['name']); ?>"><option value=""><?php esc_html_e('Choose...','booked'); ?></option><?php
 					$look_for_subs = 'dropdowns';
@@ -1862,7 +1884,7 @@ function booked_profile_content_edit(){
 
 	$booked_current_user = wp_get_current_user();
 
-	echo '<h4><i class="booked-icon booked-icon-edit" style="position:relative; top:-1px;"></i>&nbsp;&nbsp;'.esc_html__('Edit Profile','booked').'</h4>'; ?>
+	echo '<h4><i class="fa-solid fa-pen-to-square" style="position:relative; top:-1px;"></i>&nbsp;&nbsp;'.esc_html__('Edit Profile','booked').'</h4>'; ?>
 
     <form method="post" enctype="multipart/form-data" id="booked-page-form" action="<?php the_permalink(); ?>">
 

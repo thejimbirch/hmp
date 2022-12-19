@@ -4,7 +4,7 @@ body .booked-form [class*="fa-"],
 body .booked-calendar-wrap [class*="fa-"] { font-size:1em; width:auto; height:auto; line-height:1em; top:0; word-spacing:0; text-align:left; vertical-align:inherit; }
 body:not(.woocommerce-cart) .main-content table.booked-calendar th { padding:21px 0; }
 body table.booked-calendar tbody td { padding:0 !important; }
-body .booked-calendar-wrap .booked-appt-list .timeslot .timeslot-time i.booked-icon { width:auto; height:auto; }
+body .booked-calendar-wrap .booked-appt-list .timeslot .timeslot-time i.fa-solid { width:auto; height:auto; }
 body .booked-form .field p.field-small-p { padding:0; }
 body .booked-form .field input::-webkit-input-placeholder { color:#aaa; }
 body .booked-form .field input::-moz-placeholder { color:#aaa; }

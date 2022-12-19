@@ -221,11 +221,14 @@ class Essential_Grid_Meta {
 		/* 2.1.6 allows for shortcodes inside custom meta */
 		if(strpos($text, '[') !== false && strpos($text, ']') !== false) {
 			$text = preg_replace('/"/', "'", $text);
+			//3.0.8 fixed output multiselect metadata
+			$text = str_replace( '"rn','"',str_replace("'rn","'",$text) );
+			$text = str_replace(array('","',"','"), ', ', str_replace(array('["', '"]',"['","']"), '', $text));
 		}
 		
-		$text = str_replace('","', ',', str_replace(array('["', '"]'), '', $text));
+		 
 		
-		return apply_filters('essgrid_get_meta_value_by_handle', $text, $post_id, $handle);
+		return apply_filters('essgrid_get_meta_value_by_handle', $text , $post_id, $handle);
 	}
 	
 	
@@ -459,6 +462,7 @@ class Essential_Grid_Meta {
 	 */
 	public function replace_all_custom_element_meta_in_text($values, $text){
 		$cmeta = $this->get_all_meta();
+		$pmeta = Essential_Grid_Item_Element::getPostElementsArray();
 		
 		//process meta tags:
 		$arr_matches = array();
@@ -493,6 +497,11 @@ class Essential_Grid_Meta {
 							}
 						}
 						
+						if(!empty($pmeta)){
+							if(isset($pmeta[$meta])){
+								$meta_value = $values[$meta];
+							}
+						}
 						$text = str_replace($match,$meta_value,$text);
 					}
 				}

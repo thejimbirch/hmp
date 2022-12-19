@@ -1009,7 +1009,7 @@ var booked_load_calendar_date_booking_options;
 		var _custom_media = true,
 		_orig_send_attachment = wp.media.editor.send.attachment;
 
-		$('#booked_email_logo_button').click(function(e) {
+		$('#booked_email_logo_button').on('click', function(e) {
 			var send_attachment_bkp = wp.media.editor.send.attachment;
 			var button = $(this);
 			var id = button.attr('id').replace('_button', '');
@@ -1028,7 +1028,7 @@ var booked_load_calendar_date_booking_options;
 			return false;
 		});
 
-		$('#booked_email_logo_button_remove').click(function(e) {
+		$('#booked_email_logo_button_remove').on('click', function(e) {
 			e.preventDefault();
 			$("#booked_email_logo").val('');
 			$("#booked_email_logo-img").attr('src','').hide();
@@ -1210,6 +1210,7 @@ var booked_load_calendar_date_booking_options;
 					savingState(true);
 				},
 				success: function(data) {
+					console.log(data);
 					$('#booked-cf-saveButton').attr('disabled',false);
 					$('#booked-cf-sortables input[type=text]').css('border-color','#ccc');
 					$('#booked-cf-sortables textarea').css('border-color','#ccc');
@@ -2090,7 +2091,9 @@ var booked_load_calendar_date_booking_options;
 						'appt_id'     	: appt_id
 					},
 					success: function(data) {
-						savingState(false);
+						setTimeout( function(){
+							savingState(false);
+						},500 );
 					}
 				});
 
@@ -2136,7 +2139,9 @@ var booked_load_calendar_date_booking_options;
 						'appt_id'     	: appt_id
 					},
 					success: function(data) {
-						savingState(false);
+						setTimeout( function(){
+							savingState(false);
+						},500 );
 					}
 				});
 
@@ -2169,7 +2174,9 @@ var booked_load_calendar_date_booking_options;
 						$('.booked-pending-appt-list .pending-appt:not(.no-pending-message)').remove();
 						$('.booked-pending-appt-list .no-pending-message').slideDown('fast');
 						$('.booked-pending-cap').slideUp('fast');
-						savingState(false);
+						setTimeout( function(){
+							savingState(false);
+						},500 );
 					}
 				});
 
@@ -2202,7 +2209,9 @@ var booked_load_calendar_date_booking_options;
 						$('.booked-pending-appt-list .pending-appt:not(.no-pending-message)').remove();
 						$('.booked-pending-appt-list .no-pending-message').slideDown('fast');
 						$('.booked-pending-cap').slideUp('fast');
-						savingState(false);
+						setTimeout( function(){
+							savingState(false);
+						},500 );
 					}
 				});
 
@@ -2252,7 +2261,9 @@ var booked_load_calendar_date_booking_options;
 					success: function(data) {
 						$('.booked-pending-cap .button.delete-past').hide();
 						$('.booked-pending-appt-list .pending-appt.passed').remove();
-						savingState(false);
+						setTimeout( function(){
+							savingState(false);
+						},500 );
 					}
 				});
 
@@ -2303,7 +2314,7 @@ var booked_load_calendar_date_booking_options;
 		});
 
 		// Adjust the calendar sizing when resizing the window
-		$win.resize(function(){
+		$win.on('resize',function(){
 			adjust_calendar_boxes();
 			resize_booked_modal();
 		});
@@ -2365,7 +2376,9 @@ var booked_load_calendar_date_booking_options;
 		}
 
 		$(document).ajaxStop(function() {
-			savingState(false);
+			setTimeout( function(){
+				savingState(false);
+			},500 );
 		});
 
 	});
@@ -2479,7 +2492,7 @@ function close_booked_modal(){
 // Function to adjust calendar sizing
 function adjust_calendar_boxes(){
 	var boxesWidth = jQuery('.booked-calendar tbody tr.week td').width();
-	boxesHeight = boxesWidth * 0.8;
+	boxesHeight = boxesWidth * 0.75;
 	jQuery('.booked-calendar tbody tr.week td').height(boxesHeight);
 	jQuery('.booked-calendar tbody tr.week td .date').css('line-height',boxesHeight+'px');
 

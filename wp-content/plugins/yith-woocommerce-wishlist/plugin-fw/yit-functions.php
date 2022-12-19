@@ -909,10 +909,11 @@ if ( ! function_exists( 'yit_get_language_from_locale' ) ) {
 	/**
 	 * Returns language name from locale code
 	 *
-	 * @param  string $locale      Locale to search for.
-	 * @param  bool   $show_native Whether to return native language instead of english one.
+	 * @param string $locale      Locale to search for.
+	 * @param bool   $show_native Whether to return native language instead of english one.
+	 *
 	 * @return string Language name for passed locale; if can't find any, local itself is returned.
-	 * @since 3.7.1
+	 * @since  3.7.1
 	 * @author Antonio La Rocca <antonio.larocca@yithemes.com>
 	 */
 	function yit_get_language_from_locale( $locale, $show_native = false ) {
@@ -1106,15 +1107,15 @@ if ( ! function_exists( 'yith_plugin_fw_get_field' ) ) {
 		}
 
 		if ( ! isset( $field['custom_attributes'] ) ) {
-			$field['custom_attributes'] = '';
-		} elseif ( is_array( $field['custom_attributes'] ) ) {
-			// Let's build custom attributes as string.
-			$custom_attributes = array();
-			foreach ( $field['custom_attributes'] as $attribute => $attribute_value ) {
-				$custom_attributes[] = esc_attr( $attribute ) . '="' . esc_attr( $attribute_value ) . '"';
-			}
+			$field['custom_attributes'] = array();
+		}
 
-			$field['custom_attributes'] = implode( ' ', $custom_attributes );
+		if ( is_array( $field['custom_attributes'] ) ) {
+			/**
+			 * Convert custom_attributes to string to prevent issues in plugins using them as string in their templates.
+			 * todo: remove after checking plugins using custom_attributes as "string" in custom fields templates and as "array" in custom fields options.
+			 */
+			$field['custom_attributes'] = yith_plugin_fw_html_attributes_to_string( $field['custom_attributes'] );
 		}
 
 		if ( ! isset( $field['default'] ) && isset( $field['std'] ) ) {
@@ -1193,21 +1194,23 @@ if ( ! function_exists( 'yith_plugin_fw_html_data_to_string' ) ) {
 	function yith_plugin_fw_html_data_to_string( $data = array(), $echo = false ) {
 		$html_data = '';
 
-		if ( is_array( $data ) ) {
-			foreach ( $data as $key => $value ) {
-				$data_attribute = "data-{$key}";
-				$data_value     = ! is_array( $value ) ? $value : implode( ',', $value );
+		if ( ! ! $data ) {
+			if ( is_array( $data ) ) {
+				foreach ( $data as $key => $value ) {
+					$data_attribute = "data-{$key}";
+					$data_value     = ! is_array( $value ) ? $value : implode( ',', $value );
 
-				$html_data .= ' ' . esc_attr( $data_attribute ) . '="' . esc_attr( $data_value ) . '"';
+					$html_data .= ' ' . esc_attr( $data_attribute ) . '="' . esc_attr( $data_value ) . '"';
+				}
+				$html_data .= ' ';
 			}
-			$html_data .= ' ';
 		}
 
 		if ( $echo ) {
 			echo $html_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			return $html_data;
 		}
+
+		return $html_data;
 	}
 }
 
@@ -1753,8 +1756,13 @@ if ( ! function_exists( 'yith_plugin_fw_add_utm_data' ) ) {
 	 *
 	 * @since 3.6.10
 	 */
-	function yith_plugin_fw_add_utm_data( $url, $slug, $campaign = 'plugin-version-author-uri', $source = 'wp-dashboard' ) {
+	function yith_plugin_fw_add_utm_data( $url, $slug, $campaign = 'plugin-version-author-uri', $source = false ) {
 		$url = trailingslashit( $url );
+
+		if ( ! $source ) {
+			$source = yith_plugin_fw_panel_utm_source();
+		}
+
 		if ( ! empty( $slug ) ) {
 			$utm_track_data = array(
 				'utm_source'   => $source,
@@ -1766,6 +1774,27 @@ if ( ! function_exists( 'yith_plugin_fw_add_utm_data' ) ) {
 		}
 
 		return $url;
+	}
+}
+
+if ( ! function_exists( 'yith_plugin_fw_panel_utm_source' ) ) {
+	/**
+	 * Generates default UTM source for the dashboard
+	 *
+	 * @param YIT_Plugin_Panel $panel Panel object.
+	 *
+	 * @since 3.6.10
+	 */
+	function yith_plugin_fw_panel_utm_source( $panel = false ) {
+		if ( $panel->is_free() ) {
+			return 'wp-free-dashboard';
+		}
+
+		if ( $panel->is_extended() ) {
+			return 'wp-extended-dashboard';
+		}
+
+		return 'wp-dashboard';
 	}
 }
 
@@ -1791,25 +1820,43 @@ if ( ! function_exists( 'yith_plugin_fw_include_fw_template' ) ) {
 if ( ! function_exists( 'yith_plugin_fw_html_attributes_to_string' ) ) {
 	/**
 	 * Transform attributes array to HTML attributes string.
+	 * If using a string, the attributes will be escaped.
+	 * Prefer using arrays.
 	 *
-	 * @param array $attributes The array of attributes.
-	 * @param bool  $echo       Set to true to print it directly; false otherwise.
+	 * @param array|string $attributes The attributes.
+	 * @param bool         $echo       Set to true to print it directly; false otherwise.
 	 *
 	 * @return string
 	 * @since 3.7.0
+	 * @since 3.8.0 Escaping attributes when using strings; allow value-less attributes by setting value to null.
 	 */
 	function yith_plugin_fw_html_attributes_to_string( $attributes = array(), $echo = false ) {
 		$html_attributes = '';
 
-		if ( is_array( $attributes ) ) {
-			$html_attributes = array();
-			foreach ( $attributes as $key => $value ) {
-				$html_attributes[] = esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+		if ( ! ! $attributes ) {
+			if ( is_string( $attributes ) ) {
+				$parsed_attrs = wp_kses_hair( $attributes, wp_allowed_protocols() );
+				$attributes   = array();
+				foreach ( $parsed_attrs as $attr ) {
+					$attributes[ $attr['name'] ] = 'n' === $attr['vless'] ? $attr['value'] : null;
+				}
 			}
-			$html_attributes = implode( ' ', $html_attributes );
+
+			if ( is_array( $attributes ) ) {
+				$html_attributes = array();
+				foreach ( $attributes as $key => $value ) {
+					if ( ! is_null( $value ) ) {
+						$html_attributes[] = esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+					} else {
+						$html_attributes[] = esc_attr( $key );
+					}
+				}
+				$html_attributes = implode( ' ', $html_attributes );
+			}
 		}
 
 		if ( $echo ) {
+			// Already escaped above.
 			echo $html_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
@@ -1838,9 +1885,6 @@ if ( ! function_exists( 'yith_plugin_fw_get_component' ) ) {
 			);
 
 			$component = wp_parse_args( $component, $defaults );
-
-			$component['html_attributes'] = yith_plugin_fw_html_attributes_to_string( $component['attributes'] );
-			$component['html_data']       = yith_plugin_fw_html_data_to_string( $component['data'] );
 
 			$component_template = '/components/' . $type . '.php';
 
@@ -1888,6 +1932,7 @@ if ( ! function_exists( 'yith_plugin_fw_get_default_post_actions' ) ) {
 			$defaults = array(
 				'more-menu'              => array(),
 				'more-menu-in-trash'     => false,
+				'delete-directly'        => false,
 				'duplicate-url'          => false,
 				// translators: %s is the title of the post object.
 				'confirm-trash-message'  => sprintf( __( 'Are you sure you want to move "%s" to trash?', 'yith-plugin-fw' ), '<strong>' . $title . '</strong>' ),
@@ -1949,7 +1994,7 @@ if ( ! function_exists( 'yith_plugin_fw_get_default_post_actions' ) ) {
 						'icon'   => 'reply',
 						'url'    => wp_nonce_url( admin_url( sprintf( $post_type_object->_edit_link . '&amp;action=untrash', $post->ID ) ), 'untrash-post_' . $post->ID ),
 					);
-				} elseif ( EMPTY_TRASH_DAYS ) {
+				} elseif ( EMPTY_TRASH_DAYS && ! $args['delete-directly'] ) {
 					$actions['trash'] = array(
 						'type'   => 'action-button',
 						'title'  => _x( 'Trash', 'Post action', 'yith-plugin-fw' ),
@@ -1960,12 +2005,13 @@ if ( ! function_exists( 'yith_plugin_fw_get_default_post_actions' ) ) {
 						$actions['trash']['confirm_data'] = array(
 							'title'               => __( 'Confirm trash', 'yith-plugin-fw' ),
 							'message'             => $args['confirm-trash-message'],
+							'cancel-button'       => __( 'No', 'yith-plugin-fw' ),
 							'confirm-button'      => _x( 'Yes, move to trash', 'Trash confirmation action', 'yith-plugin-fw' ),
 							'confirm-button-type' => 'delete',
 						);
 					}
 				}
-				if ( 'trash' === $post->post_status || ! EMPTY_TRASH_DAYS ) {
+				if ( 'trash' === $post->post_status || ! EMPTY_TRASH_DAYS || $args['delete-directly'] ) {
 					$actions['delete'] = array(
 						'type'   => 'action-button',
 						'title'  => _x( 'Delete Permanently', 'Post action', 'yith-plugin-fw' ),
@@ -1977,7 +2023,8 @@ if ( ! function_exists( 'yith_plugin_fw_get_default_post_actions' ) ) {
 						$actions['delete']['confirm_data'] = array(
 							'title'               => __( 'Confirm delete', 'yith-plugin-fw' ),
 							'message'             => $args['confirm-delete-message'],
-							'confirm-button'      => _x( 'Yes, delete permanently', 'Delete confirmation action', 'yith-plugin-fw' ),
+							'cancel-button'       => __( 'No', 'yith-plugin-fw' ),
+							'confirm-button'      => _x( 'Yes, delete', 'Delete confirmation action', 'yith-plugin-fw' ),
 							'confirm-button-type' => 'delete',
 						);
 					}
@@ -2145,5 +2192,111 @@ if ( ! function_exists( 'yith_plugin_fw_get_action_buttons' ) ) {
 		}
 
 		return $actions_html;
+	}
+}
+
+if ( ! function_exists( 'yith_plugin_fw_get_post_formatted_name' ) ) {
+	/**
+	 * Get the formatted name for posts/products
+	 *
+	 * @param int|WP_Post|WC_Product $post The post ID, the post object, or the product object.
+	 * @param array                  $args Arguments.
+	 *
+	 * @return string
+	 * @since 3.7.2
+	 */
+	function yith_plugin_fw_get_post_formatted_name( $post, $args = array() ) {
+		$defaults  = array(
+			'show-id'   => false,
+			'post-type' => false,
+		);
+		$args      = wp_parse_args( $args, $defaults );
+		$post_type = $args['post-type'];
+		$show_id   = $args['show-id'];
+
+		if ( is_a( $post, 'WP_Post' ) ) {
+			$post_id = $post->ID;
+		} elseif ( class_exists( 'WC_Product' ) && is_a( $post, 'WC_Product' ) ) {
+			$post_id = $post->get_id();
+			if ( false === $post_type ) {
+				$post_type = is_a( $post, 'WC_Product_Variation' ) ? 'product_variation' : 'product';
+			}
+		} else {
+			$post_id = absint( $post );
+		}
+
+		if ( ! $post_type ) {
+			$post_type = get_post_type( $post_id );
+		}
+
+		$name = null;
+
+		switch ( $post_type ) {
+			case 'product':
+			case 'product_variation':
+				$product = wc_get_product( $post );
+				if ( $product ) {
+					$name = $product->get_formatted_name();
+
+					if ( ! $show_id ) {
+
+						if ( $product->get_sku() ) {
+							$identifier = $product->get_sku();
+						} else {
+							$identifier = '#' . $product->get_id();
+						}
+
+						// Use normal replacing instead of regex since the identifier could be also the product SKU.
+						$name = str_replace( "({$identifier})", '', $name );
+					}
+				}
+		}
+
+		if ( is_null( $name ) ) {
+			$name = get_the_title( $post_id );
+			if ( $show_id ) {
+				$name .= " (#{$post_id})";
+			}
+		}
+
+		return $name;
+	}
+}
+
+if ( ! function_exists( 'yith_plugin_fw_add_kses_global_attributes' ) ) {
+
+	/**
+	 * Add global attributes to a tag in the allowed HTML list.
+	 *
+	 * @param array $attributes An array of attributes.
+	 *
+	 * @return array The array of attributes with global attributes added.
+	 *
+	 * @since  3.8.0
+	 */
+	function yith_plugin_fw_add_kses_global_attributes( $attributes ) {
+		$global_attributes = array(
+			'aria-describedby' => true,
+			'aria-details'     => true,
+			'aria-label'       => true,
+			'aria-labelledby'  => true,
+			'aria-hidden'      => true,
+			'class'            => true,
+			'id'               => true,
+			'style'            => true,
+			'title'            => true,
+			'role'             => true,
+			'data-*'           => true,
+		);
+
+		if ( true === $attributes ) {
+			$attributes = array();
+		}
+
+		if ( is_array( $attributes ) ) {
+			return array_merge( $attributes, $global_attributes );
+		}
+
+		return $attributes;
 	}
 }

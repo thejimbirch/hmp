@@ -14,7 +14,6 @@ if ( ! function_exists( 'WC' ) ) {
 
 list ( $field_id, $name, $class, $placeholder, $std, $value, $data, $custom_attributes ) = yith_plugin_fw_extract( $field, 'id', 'name', 'class', 'placeholder', 'std', 'value', 'data', 'custom_attributes' );
 
-$placeholder     = isset( $placeholder ) ? ' data-placeholder = "' . $placeholder . '" ' : '';
 $country_setting = (string) $value;
 
 if ( strstr( $country_setting, ':' ) ) {
@@ -37,8 +36,8 @@ $class     = isset( $class ) ? $class : 'yith-plugin-fw-select';
 	<?php if ( isset( $placeholder ) ) : ?>
 		data-placeholder="<?php echo esc_attr( $placeholder ); ?>"
 	<?php endif; ?>
-	<?php echo $custom_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	<?php echo isset( $data ) ? yith_plugin_fw_html_data_to_string( $data ) : ''; ?>
+	<?php yith_plugin_fw_html_attributes_to_string( $custom_attributes, true ); ?>
+	<?php yith_plugin_fw_html_data_to_string( $data, true ); ?>
 >
 	<?php
 	if ( $countries ) {

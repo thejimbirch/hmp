@@ -1,12 +1,27 @@
 === Booked Classic ===
 Tags: appointment, appointments
-Requires at least: 4.7
-Tested up to: 5.2.1
-Requires PHP: 5.6
+Requires at least: 5
+Tested up to: 6.0.1
+Requires PHP: 7.4
 
 Powerful appointment booking made simple.
 
 == Changelog ==
+
+= 2.4 =
+* **NEW:** Development tweaks to make upcoming updates faster and more efficient
+* **TWEAK:** Replaced all icons with FontAwesome 6
+* **TWEAK:** Design tweaks throughout
+
+= 2.3.5 =
+* **FIX:** Fixed an issue where checking custom fields as "required" would not stay checked.
+* **FIX:** Fixed the "What's New?" screen.
+* **FIX:** jQuery deprecation errors have been resolved.
+
+= 2.3 =
+* **TWEAK:** All add-ons are now part of the core Booked plugin. No need to install or keep those installed separately anymore. You can safely delete them from your Plugins page (they will be deactivated automatically when Booked is updated to 2.3+).
+* **TWEAK:** Moved WooCommerce and Calendar Feeds screens into the Settings panel.
+* **FIX:** Fixed some security issues when adding/editing appointments from the admin screen.
 
 = 2.2.6 =
 * **FIX:** Minor CSS fixes to Booked admin form fields.

@@ -85,7 +85,7 @@ class Essential_Grid_Facebook {
 	 * @param    string    $user_id 	Facebook User id (not name)
 	 * @param    int       $item_count 	number of photos to pull
 	 */
-	public function get_photo_sets($user_id,$item_count=10,$access_token){
+	public function get_photo_sets($user_id,$item_count,$access_token){ //item_count = 10
 		//photoset params
 		//$oauth = wp_remote_fopen("https://graph.facebook.com/oauth/access_token?type=client_cred&client_id=".$app_id."&client_secret=".$app_secret);
 		//$oauth = json_decode($oauth);
@@ -101,7 +101,7 @@ class Essential_Grid_Facebook {
 	 * @param    string    $photo_set_id 	Photoset ID
 	 * @param    int       $item_count 	number of photos to pull
 	 */
-	 public function get_photo_set_photos($photo_set_id,$item_count=10,$access_token){
+	 public function get_photo_set_photos($photo_set_id,$item_count,$access_token){ //item_count = 10
  		//$oauth = wp_remote_fopen("https://graph.facebook.com/oauth/access_token?type=client_cred&client_id=".$app_id."&client_secret=".$app_secret);
  		//$oauth = json_decode($oauth);
  		$url = "https://graph.facebook.com/".$photo_set_id."/photos?fields=id,from,message,picture,images,link,name,type,status_type,created_time,updated_time,is_hidden,likes.limit(1).summary(true)&limit=100&access_token=" . $access_token;
@@ -872,6 +872,12 @@ if(! function_exists( 'instagram_autoloader' ) ){
 
 class Essential_Grid_Instagram {
 
+	const QUERY_SHOW = 'ig_esg_show';
+	const QUERY_TOKEN = 'ig_token';
+	const QUERY_CONNECTWITH = 'ig_user';
+	const QUERY_ERROR = 'ig_error_message';
+	const QUERY_ESG_ERROR = 'ig_esg_error';
+
 	/**
 	 * API key
 	 *
@@ -902,16 +908,16 @@ class Essential_Grid_Instagram {
 	/**
 	 * @var array of InstagramBasicDisplay objects
 	 */
-private $instagram;
+	private $instagram;
 
 	/**
- * Transient for token refresh in seconds
- *
- * @since    1.0.0
- * @access   private
- * @var      number    $transient_token_sec Transient time in seconds
-*/
-private $transient_token_sec;
+	 * Transient for token refresh in seconds
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      number    $transient_token_sec Transient time in seconds
+	*/
+	private $transient_token_sec;
 
 
 	/**
@@ -924,6 +930,102 @@ private $transient_token_sec;
 		spl_autoload_register('instagram_autoloader');
 		$this->transient_sec = $transient_sec;
 		$this->transient_token_sec = 86400 * 30; // 30 days
+	}
+
+	public function add_actions()
+	{
+		add_action('init', array(&$this, 'do_init'), 4);
+		add_action('admin_footer', array(&$this, 'footer_js'));
+	}
+
+	/**
+	 * check if we have QUERY_TOKEN set
+	 */
+	public function do_init()
+	{
+		// we are not on esg page
+		if (!isset($_GET['page']) || $_GET['page'] != 'essential-grid') return;
+
+		//rename error var to avoid conflict with revslider
+		if (isset($_GET[self::QUERY_ERROR])) {
+			$url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+			$url = add_query_arg([self::QUERY_ERROR => false, self::QUERY_ESG_ERROR => $_GET[self::QUERY_ERROR]], $url);
+			wp_redirect($url);
+			exit();
+		}
+
+		if (
+			!isset($_GET['page']) || $_GET['page'] != 'essential-grid' // we are not on esg page
+			|| isset($_GET[self::QUERY_ERROR]) //instagram api error
+			|| !isset($_GET[self::QUERY_TOKEN]) // no token
+			|| !isset($_GET['create']) // no grid id
+		)
+			return;
+
+		$token = $_GET[self::QUERY_TOKEN];
+		$connectwith = $_GET[self::QUERY_CONNECTWITH];
+		$id = $_GET['create'];
+
+		$grid = Essential_Grid::get_essential_grid_by_id(intval($id));
+		if(empty($grid)){
+			$_GET[self::QUERY_ERROR] = __('Grid could not be loaded', 'revslider');
+			return;
+		}
+
+		//update grid
+		$grid['postparams']['instagram-api-key'] = $token;
+		$grid['postparams']['instagram-connected-to'] = $connectwith;
+		Essential_Grid_Admin::update_create_grid($grid);
+
+		//clear cache
+		$lang = array();
+		if(Essential_Grid_Wpml::is_wpml_exists()){
+			$lang = icl_get_languages();
+		}
+		if(!empty($lang)){
+			foreach($lang as $code => $val){
+				delete_transient( 'ess_grid_trans_query_'.$grid['id'].$val['language_code'] ); //delete cache
+				delete_transient( 'ess_grid_trans_full_grid_'.$grid['id'].$val['language_code'] ); //delete cache
+			}
+		}else{
+			delete_transient( 'ess_grid_trans_query_'.$grid['id'] ); //delete cache
+			delete_transient( 'ess_grid_trans_full_grid_'.$grid['id'] ); //delete cache
+		}
+
+		//redirect
+		$url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		$url = add_query_arg([self::QUERY_TOKEN => false, self::QUERY_SHOW => 1], $url);
+		wp_redirect($url);
+		exit();
+	}
+
+	public function footer_js() {
+		// we are not on esg page
+		if (!isset($_GET['page']) || $_GET['page'] != 'essential-grid') return;
+
+		//switch to source tab
+		if (isset($_GET[self::QUERY_SHOW])) {
+			echo "<script>jQuery(document).ready(function(){ setTimeout(function(){jQuery('.selected-source-setting').trigger('click');}, 500); });</script>";
+		}
+
+		//show error
+		if (isset($_GET[self::QUERY_ESG_ERROR])) {
+			$err = __('Instagram Reports: ', 'revslider') . $_GET[self::QUERY_ESG_ERROR];
+			echo '<script>jQuery(document).ready(function(){ AdminEssentials.showInfo({content: "'.$err.'", type: "warning", showdelay: 0, hidedelay: 0, hideon: "click", event: ""}) });</script>';
+		}
+	}
+
+	public static function get_login_url()
+	{
+		$app_id = '677807423170942';
+		$redirect = 'https://updates.themepunch.tools/ig/auth.php';
+		$state = base64_encode(admin_url('admin.php?page=essential-grid&view=grid-create&create='.$_GET['create']));
+		return sprintf(
+			'https://api.instagram.com/oauth/authorize?app_id=%s&redirect_uri=%s&response_type=code&scope=user_profile,user_media&state=%s',
+			$app_id,
+			$redirect,
+			$state
+		);
 	}
 
 	/**
@@ -961,22 +1063,24 @@ private $transient_token_sec;
 	/**
 	 * get grid transient name
 	 *
+	 * @param int $grid_handle grid handle
 	 * @param string $token
 	 * @param int $count
 	 */
-    public function get_esg_transient_name($token, $count){
-		$cacheKey = 'instagram' . '-' . $token . '-' . $count;
+    public function get_esg_transient_name($grid_handle, $token, $count){
+		$cacheKey = 'instagram' . '-' . $grid_handle . '-' . $token . '-' . $count;
 		return 'essgrid_'. md5($cacheKey);
 	}
 
 	/**
 	 * clear grid transient
 	 *
+	 * @param int $grid_handle grid handle
 	 * @param string $token
 	 * @param int $count
 	 */
-	public function clear_esg_transient($token, $count){
-		$transient_name = $this->get_esg_transient_name($token, $count);
+	public function clear_esg_transient($grid_handle, $token, $count){
+		$transient_name = $this->get_esg_transient_name($grid_handle, $token, $count);
 		delete_transient($transient_name);
 	}
 
@@ -984,19 +1088,24 @@ private $transient_token_sec;
 	 * Get Instagram User Pictures
 	 *
 	 * @since    3.0
-	 * @param    string    $user_id 	Instagram User id (not name)
+	 * @param int $grid_handle grid handle
+	 * @param string $token Instagram Access Token
+	 * @param string $count media count
+	 * @param string $orig_image
+	 * @return mixed
 	 */
-	public function get_public_photos($token, $count, $orig_image){
+	public function get_public_photos($grid_handle, $token, $count, $orig_image){
 
-		//Loads autoloader for Instragram scrapper requirements
-
-		if(!empty($token)){
+		if(empty($token)){
+			_e('Instagram reports: No token provided',EG_TEXTDOMAIN);
+			return false;
+		}
 
 		//Getting instragram images
 		$this->_refresh_token($token);
         $instagram = $this->getInstagram($token);
 
-		$transient_name = $this->get_esg_transient_name($token, $count);
+		$transient_name = $this->get_esg_transient_name($grid_handle, $token, $count);
       	if($this->transient_sec > 0 && false !== ($data = get_transient($transient_name))){
             $this->stream = $data;
 			return $this->stream;
@@ -1017,13 +1126,6 @@ private $transient_token_sec;
             _e('Instagram reports: Please check the settings','revslider');
             return false;
         }
-
-
-		}
-		else {
-			_e('Instagram reports: Please check the settings',EG_TEXTDOMAIN);
-			return false;
-		}
 
 	}
 
@@ -1267,7 +1369,7 @@ class Essential_Grid_Flickr {
 	 * @param    string    $user_id 	flicker User id (not name)
 	 * @param    int       $item_count 	number of photos to pull
 	 */
-	public function get_photo_sets($user_id,$item_count=10,$current_photoset){
+	public function get_photo_sets($user_id,$item_count,$current_photoset){ //item_count = 10
 		//photoset params
 		$photo_set_params = $this->api_param_defaults + array(
 				'method'  => 'flickr.photosets.getList',
@@ -1568,9 +1670,23 @@ class Essential_Grid_Youtube {
 	 */
 	public function get_playlists(){
 		//call the API and decode the response
+		$playlists = array();
+		//first call to get playlists
 		$url = "https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=".$this->channel_id."&maxResults=50&key=".$this->api_key;
 		$rsp = json_decode(wp_remote_fopen($url));
-		return $rsp->items;
+		$playlists = $rsp->items;
+		//generate as many calls as playlist pages are available
+		$supervisor_count = 10;
+		$nextpage = empty($rsp->nextPageToken) ? '' : $rsp->nextPageToken;
+		while(!empty($rsp->nextPageToken) && $supervisor_count){
+			$url ="https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=".$this->channel_id."&maxResults=50&key=".$this->api_key."&page_token=".$rsp->nextPageToken;
+			$rsp = json_decode(wp_remote_fopen($url));
+			$playlists = array_merge($playlists,$rsp->items);
+			$nextpage = empty($rsp->nextPageToken) ? '' : $rsp->nextPageToken;
+			$supervisor_count--;
+		}
+		
+		return $playlists;
 	}
 
 	/**
@@ -1601,6 +1717,8 @@ class Essential_Grid_Youtube {
 				$runs = ceil($count / 50);
 				$original_count = $count;
 				$supervisor_count = 0;
+				if(!isset($this->stream)) $this->stream = array();
+				
 				for ($i=0; $i < $runs && sizeof($this->stream) < $original_count && $supervisor_count < 20; $i++) {
 
 					$nextpage = empty($page_rsp->nextPageToken) ? '' : "&pageToken=".$page_rsp->nextPageToken;
@@ -1614,7 +1732,7 @@ class Essential_Grid_Youtube {
 
 					if(!empty($page_rsp) && !isset($page_rsp->error->message) ){
 						$count = $this->youtube_playlist_output_array($page_rsp->items,$count);
-						//if( empty($nextpage) ) $i = $runs;
+						if( empty($nextpage) ) $i = $runs;
 					}
 					else {
 						echo __("YouTube reports: ",EG_TEXTDOMAIN).$page_rsp->error->message;
@@ -1741,9 +1859,10 @@ class Essential_Grid_Youtube {
 	public function get_playlist_options($current_playlist=""){
 		$return = array();
 		$playlists = $this->get_playlists();
+		$count = 1;
 		if(!empty($playlists)){
 			foreach($playlists as $playlist){
-				$return[] = '<option title="'.$playlist->snippet->description.'" '.selected( $playlist->id , $current_playlist , false ).' value="'.$playlist->id.'">'.$playlist->snippet->title.'</option>"';
+				$return[] = '<option data-count="'.$count++.'" title="'.$playlist->snippet->description.'" '.selected( $playlist->id , $current_playlist , false ).' value="'.$playlist->id.'">'.$playlist->snippet->title.'</option>"';
 			}
 		}
 		return $return;

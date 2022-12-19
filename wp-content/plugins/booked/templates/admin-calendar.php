@@ -1,5 +1,8 @@
-<section id="booked-plugin-page" class="booked-admin-calendar-page-wrap">
-
+<section class="wrap">
+	<div class="booked-admin-calendar-notice-area"><h1 style="display:none;"></h1></div>
+</section>
+<section id="booked-plugin-page" class="wrap booked-admin-calendar-page-wrap">
+	
 	<?php
 
 	$calendars = get_terms('booked_custom_calendars','orderby=slug&hide_empty=0');
@@ -26,8 +29,8 @@
 
 		if (!$booked_none_assigned && count($calendars) >= 1):
 
-			?><div class="booked-calendarSwitcher"><p>
-				<i class="booked-icon booked-icon-calendar"></i><?php
+			?><div class="booked-calendarSwitcher">
+				<i class="fa-solid fa-calendar-days"></i><?php
 
 				echo '<select name="bookedCalendarDisplayed">';
 				if (current_user_can('manage_booked_options')): echo '<option value="">'.esc_html__('All Calendars','booked').'</option>'; endif;
@@ -40,7 +43,7 @@
 
 				echo '</select>';
 
-			?></p></div><?php
+			?></div><?php
 
 		else :
 

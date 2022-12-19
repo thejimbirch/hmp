@@ -21,7 +21,7 @@ The wishlist is one of the most powerful and popular tools in an ecommerce shop.
 
 This means that you’ll be able to loyalise customers, push them to buy and attract new customers any time a wishlist is shared. Not bad for one plugin only, don’t you think?
 
-Our YITH WooCommerce Wishlist has more than **800,000 active installations** and that’s why it’s **the most popular wishlist plugin ever.**
+Our YITH WooCommerce Wishlist has more than **900,000 active installations** and that’s why it’s **the most popular wishlist plugin ever.**
 
 To celebrate this record and say thanks to all the plugin users, we’ve decided to release a new 3.0 version that has improved the design tremendously  and added many new options.
 
@@ -151,13 +151,10 @@ Yes, of course you can. To avoid Wishlist page to show product prices, you can h
 
 ## Changelog
 
-### 3.0.23 - Released on 18 June 2021
+### 3.16.0 - Released on 14 December 2022
 
-* New: support for WooCommerce 5.4
+* New: support for WooCommerce 7.2
 * Update: YITH plugin framework
-* Fix: filters to alter resources dependencies not actually affecting assets loaded in the page (thanks to deothemes)
-* Fix: better support for wishlist page with non-standard characters in slug
-* Dev: added new yith_wcwl_after_add_wishlist action, triggered after wishlist creation
 
 ## Support
 

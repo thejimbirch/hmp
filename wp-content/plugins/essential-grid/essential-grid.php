@@ -6,9 +6,9 @@
 @copyright 2018 ThemePunch
 @wordpress-plugin
 Plugin Name:       Essential Grid
-Plugin URI:        https://essential.themepunch.com
+Plugin URI:        https://www.essential-grid.com
 Description:       Essential Grid - The Original Premium Grid Plugin
-Version:           3.0.7
+Version:           3.0.11
 Author:            ThemePunch
 Author URI:        https://themepunch.com
 Text Domain:       essential-grid
@@ -29,7 +29,7 @@ define('EG_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 define('EG_PLUGIN_URL', str_replace('index.php','',plugins_url( 'index.php', __FILE__ )));
 define('EG_TEXTDOMAIN', 'essential-grid');
 
-define('ESG_TP_TOOLS', '6.1.18');
+define('ESG_TP_TOOLS', '6.2.0');
 
 $esg_dev_mode	 = (file_exists(EG_PLUGIN_PATH . 'public/assets/js/dev/essential-grid.js')) ? true : false;
 $wc_is_localized = false; //used to determinate if already done for cart button on this skin

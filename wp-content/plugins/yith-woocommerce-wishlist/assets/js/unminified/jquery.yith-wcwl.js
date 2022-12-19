@@ -23,6 +23,7 @@ jQuery( function( $ ){
                 filtered_data = null,
                 data = {
                     action: yith_wcwl_l10n.actions.add_to_wishlist_action,
+                    nonce: yith_wcwl_l10n.nonce.add_to_wishlist_nonce,
                     context: 'frontend',
                     add_to_wishlist: product_id,
                     product_type: t.data( 'product-type' ),
@@ -176,6 +177,7 @@ jQuery( function( $ ){
                 content = t.closest( '.content' ),
                 data = {
                     action: yith_wcwl_l10n.actions.remove_from_all_wishlists,
+                    nonce: yith_wcwl_l10n.nonce.remove_from_all_wishlists_nonce,
                     context: 'frontend',
                     prod_id: prod_id,
                     wishlist_id: wishlist_id,
@@ -300,6 +302,7 @@ jQuery( function( $ ){
                 el_wrap = $( '.add-to-wishlist-' + product_id ),
                 data = {
                     action: yith_wcwl_l10n.actions.delete_item_action,
+                    nonce: yith_wcwl_l10n.nonce.delete_item_nonce,
                     context: 'frontend',
                     item_id: item_id,
                     fragments: retrieve_fragments( product_id )
@@ -371,6 +374,7 @@ jQuery( function( $ ){
                 data = form.serializeArray().reduce( ( data, field ) => { data[ field.name ] = field.value; return data; }, {} );
 
             data.action  = yith_wcwl_l10n.actions.ask_an_estimate;
+            data.nonce   = yith_wcwl_l10n.nonce.ask_an_estimate_nonce;
             data.context = 'frontend';
 
             $.ajax({
@@ -583,6 +587,14 @@ jQuery( function( $ ){
 
     } ).trigger('yith_wcwl_init');
 
+    // Avoid pressing the enter key in the qty input.
+    $( 'form#yith-wcwl-form .wishlist_table .product-quantity input' ).on( 'keypress', function( e ) {
+        if ( e.keyCode == '13' ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     /* === INIT FUNCTIONS === */
 
     /**
@@ -616,6 +628,7 @@ jQuery( function( $ ){
             opacity               : 0.8,
             deeplinking           : false,
             overlay_gallery       : false,
+            keyboard_shortcuts    : false,
             default_width         : 500,
             changepicturecallback : function(){
                 init_select_box();
@@ -920,6 +933,7 @@ jQuery( function( $ ){
                     jqxhr = $.ajax({
                         data: {
                             action: yith_wcwl_l10n.actions.sort_wishlist_items,
+                            nonce: yith_wcwl_l10n.nonce.sort_wishlist_items_nonce,
                             context: 'frontend',
                             positions: positions,
                             wishlist_token: t.data('token'),
@@ -970,6 +984,7 @@ jQuery( function( $ ){
                     },
                     data: {
                         action: yith_wcwl_l10n.actions.update_item_quantity,
+                        nonce: yith_wcwl_l10n.nonce.update_item_quantity_nonce,
                         context: 'frontend',
                         product_id: product_id,
                         wishlist_token: token,
@@ -1112,6 +1127,8 @@ jQuery( function( $ ){
             else{
                 container.find( '#new_wishlist_selector' ).remove();
             }
+
+            $(document).trigger( 'yith_wcwl_tab_selected', [ tab, target ] );
         } );
 
         $(document).on( 'change', '.wishlist-select', function(){
@@ -1188,6 +1205,7 @@ jQuery( function( $ ){
                     },
                     data: {
                         action: yith_wcwl_l10n.actions.load_mobile_action,
+                        nonce: yith_wcwl_l10n.nonce.load_mobile_nonce,
                         context: 'frontend',
                         fragments: fragments
                     },
@@ -1217,6 +1235,7 @@ jQuery( function( $ ){
      */
     function call_ajax_move_item_to_another_wishlist( data, beforeSend, complete ) {
         data.action  = yith_wcwl_l10n.actions.move_to_another_wishlist_action;
+        data.nonce   = yith_wcwl_l10n.nonce.move_to_another_wishlist_nonce;
         data.context = 'frontend';
 
         if( data.wishlist_token === '' || data.destination_wishlist_token === '' || data.item_id === '' ){
@@ -1254,6 +1273,7 @@ jQuery( function( $ ){
             wishlist_token = table.data( 'token' ),
             data = {
                 action: yith_wcwl_l10n.actions.remove_from_wishlist_action,
+                nonce: yith_wcwl_l10n.nonce.remove_from_wishlist_nonce,
                 context: 'frontend',
                 remove_from_wishlist: data_row_id,
                 wishlist_id: wishlist_id,
@@ -1301,6 +1321,7 @@ jQuery( function( $ ){
             wishlist_token = table.data( 'token' ),
             data = {
                 action: yith_wcwl_l10n.actions.reload_wishlist_and_adding_elem_action,
+                nonce: yith_wcwl_l10n.nonce.reload_wishlist_and_adding_elem_nonce,
                 context: 'frontend',
                 pagination: pagination,
                 per_page: per_page,
@@ -1410,6 +1431,7 @@ jQuery( function( $ ){
 
         data = {
             action: yith_wcwl_l10n.actions.save_title_action,
+            nonce: yith_wcwl_l10n.nonce.save_title_nonce,
             context: 'frontend',
             wishlist_id: wishlist_id,
             title: new_title,
@@ -1443,6 +1465,8 @@ jQuery( function( $ ){
                 if( typeof fragments !== 'undefined' ){
                     replace_fragments( fragments );
                 }
+
+                init_handling_after_ajax();
             }
         });
     }
@@ -1460,6 +1484,7 @@ jQuery( function( $ ){
             wishlist_id = row.data( 'wishlist-id' ),
             data = {
                 action: yith_wcwl_l10n.actions.save_privacy_action,
+                nonce: yith_wcwl_l10n.nonce.save_privacy_nonce,
                 context: 'frontend',
                 wishlist_id: wishlist_id,
                 privacy: new_privacy,
@@ -1743,6 +1768,7 @@ jQuery( function( $ ){
         $.ajax( {
             data: {
                 action: yith_wcwl_l10n.actions.load_fragments,
+                nonce: yith_wcwl_l10n.nonce.load_fragments_nonce,
                 context: 'frontend',
                 fragments: fragments
             },

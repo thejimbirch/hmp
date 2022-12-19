@@ -12,7 +12,7 @@ class BookedDashboardWidget {
 
 		wp_add_dashboard_widget(
 	        'booked_upcoming_appointments',
-	        '<i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;'.esc_html__('Upcoming Appointments','booked'),
+	        '<span><i class="fa-regular fa-calendar-days"></i>&nbsp;&nbsp;'.esc_html__('Upcoming Appointments','booked') . '</span>',
 	        array($this, 'booked_dashboard_widget_function')
 	    );
 
@@ -176,19 +176,19 @@ class BookedDashboardWidget {
 						if (!isset($appt['guest_name'])):
 							$user_info = get_userdata($appt['user']);
 							if (isset($user_info->ID)):
-								echo '<a href="#" class="user" data-user-id="'.$user_info->ID.'"><i class="booked-icon booked-icon-pencil"></i>&nbsp;'.booked_get_name($user_info->ID).'</a>';
+								echo '<a href="#" class="user" data-user-id="'.$user_info->ID.'"><i class="fa-solid fa-pencil"></i>&nbsp;'.booked_get_name($user_info->ID).'</a>';
 							else :
 								esc_html_e('(this user no longer exists)','booked');
 							endif;
 						else :
-							echo '<a href="#" class="user" data-user-id="0"><i class="booked-icon booked-icon-pencil"></i>&nbsp;'.$appt['guest_name'].'</a>';
+							echo '<a href="#" class="user" data-user-id="0"><i class="fa-solid fa-pencil"></i>&nbsp;'.$appt['guest_name'].'</a>';
 						endif;
 
 						echo '<br>';
 						if ($late_date > $date_to_compare): echo '<span class="late-appt">' . esc_html__('This appointment has passed.','booked') . '</span><br>'; endif;
 						if ($appt['calendar']): echo '<strong style="color:#000">'.$appt['calendar'].'</strong><br>'; endif;
-						echo '<i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;'.$day_name.', '.$date_display;
-						echo '&nbsp;&nbsp;&nbsp;<i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;'.$timeslotText;
+						echo '<i class="fa-solid fa-calendar-days"></i>&nbsp;&nbsp;'.$day_name.', '.$date_display;
+						echo '&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-clock"></i>&nbsp;&nbsp;'.$timeslotText;
 
 					echo '</span>';
 
@@ -196,8 +196,11 @@ class BookedDashboardWidget {
 
 			endforeach;
 
-			echo '<div class="pending-appt'.(!empty($appointments_array) ? ' no-pending-message' : '').'">';
-				echo '<p style="text-align:center;">'.esc_html__('There are no upcoming appointments.','booked').'</p>';
+			echo '<div class="pending-appt' . ( !empty($appointments_array) ? ' no-pending-message' : '' ) . '">';
+				echo '<div style="display:flex; flex-direction:column; height:200px; width:100%; justify-content:center; align-items:center;">
+					<div style="font-size:50px; color:#aaa;"><i class="fa-regular fa-calendar"></i></div>
+					<div style="font-size:16px; color:#aaa;">' . esc_html__('There are no upcoming appointments.','booked') . '</div>
+				</div>';
 			echo '</div>';
 
 		echo '</div>';

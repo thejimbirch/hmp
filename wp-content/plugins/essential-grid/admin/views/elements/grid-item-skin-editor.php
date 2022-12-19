@@ -631,6 +631,17 @@ if(!isset($skin['layers'])) $skin['layers'] = array(); //fallback if skin does n
 											<option <?php selected($link_link_type, 'lightbox'); ?> value="lightbox"><?php _e('Lightbox', EG_TEXTDOMAIN); ?></option>
 											<option <?php selected($link_link_type, 'ajax'); ?> value="ajax"><?php _e('Ajax', EG_TEXTDOMAIN); ?></option>
 										</select>
+										<div id="eg-link-target-wrap" style="display: none;">
+											<div class="div13"></div>
+											<label ><?php _e('Link Target', EG_TEXTDOMAIN); ?></label><!--
+											--><?php $link_target = $base->getVar($skin, array('params', 'link-target'), '_self'); ?><select name="link-target">
+												<option <?php selected($link_target, 'disabled'); ?> value="disabled"><?php _e('disabled', EG_TEXTDOMAIN); ?></option>
+												<option <?php selected($link_target, '_self'); ?> value="_self"><?php _e('_self', EG_TEXTDOMAIN); ?></option>
+												<option <?php selected($link_target, '_blank'); ?> value="_blank"><?php _e('_blank', EG_TEXTDOMAIN); ?></option>
+												<option <?php selected($link_target, '_parent'); ?> value="_parent"><?php _e('_parent', EG_TEXTDOMAIN); ?></option>
+												<option <?php selected($link_target, '_top'); ?> value="_top"><?php _e('_top', EG_TEXTDOMAIN); ?></option>
+											</select>
+										</div>
 										<div id="eg-link-post-url-wrap" style="display: none;">
 											<div class="div13"></div>
 											<label><?php _e('Link To URL', EG_TEXTDOMAIN); ?></label><input class="element-setting" type="text" name="link-url-link" value="<?php echo $base->getVar($skin, array('params', 'link-url-link'), ''); ?>" />
@@ -644,15 +655,7 @@ if(!isset($skin['layers'])) $skin['layers'] = array(); //fallback if skin does n
 											<div class="div13"></div>
 											<label><?php _e('Link JavaScript', EG_TEXTDOMAIN); ?></label><input class="element-setting" type="text" name="link-javascript-link" value="<?php echo $base->getVar($skin, array('params', 'link-javascript-link'), ''); ?>" />
 										</div>
-										<div class="div13"></div>
-										<label ><?php _e('Link Target', EG_TEXTDOMAIN); ?></label><!--
-										--><?php $link_target = $base->getVar($skin, array('params', 'link-target'), '_self'); ?><select name="link-target">
-											<option <?php selected($link_target, 'disabled'); ?> value="disabled"><?php _e('disabled', EG_TEXTDOMAIN); ?></option>
-											<option <?php selected($link_target, '_self'); ?> value="_self"><?php _e('_self', EG_TEXTDOMAIN); ?></option>
-											<option <?php selected($link_target, '_blank'); ?> value="_blank"><?php _e('_blank', EG_TEXTDOMAIN); ?></option>
-											<option <?php selected($link_target, '_parent'); ?> value="_parent"><?php _e('_parent', EG_TEXTDOMAIN); ?></option>
-											<option <?php selected($link_target, '_top'); ?> value="_top"><?php _e('_top', EG_TEXTDOMAIN); ?></option>
-										</select>
+										
 									</div>
 								</div>
 							</div>
@@ -1684,7 +1687,7 @@ if(!isset($skin['layers'])) $skin['layers'] = array(); //fallback if skin does n
 //		   punchgs.TweenLite.to(ic,0.5,{scale:1,delay:1.6,ease:punchgs.Power3.easeOut});
 		   punchgs.TweenLite.to(bw,0.3,{borderColor:"#8E44A9"});
 		   punchgs.TweenLite.to(bw,0.3,{borderColor:"#ccc",delay:0.5});
-	       if (jQuery('#layer-settings-header').hasClass("box-closed")) jQuery('#layer-settings-header').click();
+	       if (jQuery('#layer-settings-header').hasClass("box-closed")) jQuery('#layer-settings-header').trigger('click');
         });
 	});
 

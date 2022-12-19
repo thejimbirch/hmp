@@ -284,7 +284,7 @@ font-family: star;
 .esg-layout-even .esg-entry-media img		{	display:none}
 
 
-.esg-media-cover-wrapper					{	position: relative; width:100%;}
+.esg-media-cover-wrapper					{	position: relative; width:100%;backface-visibility: hidden}
 .esg-layout-even .esg-media-cover-wrapper	{	height:100%;}
 
 .esg-entry-media-wrapper					{	z-index: 0; }

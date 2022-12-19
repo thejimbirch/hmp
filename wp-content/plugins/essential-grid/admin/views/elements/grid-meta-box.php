@@ -484,14 +484,14 @@ if(isset($disable_advanced) && $disable_advanced == true){ //only show if we are
 			jQuery(t.data('target')).show();
 		});
 		
-		jQuery('#eg-choose-from-image-library').click(function(e) {
+		jQuery('#eg-choose-from-image-library').on('click',function(e) {
 			e.preventDefault();
 			AdminEssentials.upload_image_img(jQuery(this).data('setto'));
 			
 			return false; 
 		});
 		
-		jQuery('#eg-clear-from-image-library').click(function(e) {
+		jQuery('#eg-clear-from-image-library').on('click',function(e) {
 			e.preventDefault();
 			jQuery('#eg_sources_image').val('');
 			jQuery('#eg_sources_image-img').attr("src","");
@@ -500,14 +500,14 @@ if(isset($disable_advanced) && $disable_advanced == true){ //only show if we are
 		});
 		
 		
-		jQuery('.eg-cm-image-add').click(function(e) {
+		jQuery('.eg-cm-image-add').on('click',function(e) {
 			e.preventDefault();
 			AdminEssentials.upload_image_img(jQuery(this).data('setto'));
 			
 			return false; 
 		});
 		
-		jQuery('.eg-cm-image-clear').click(function(e) {
+		jQuery('.eg-cm-image-clear').on('click',function(e) {
 			e.preventDefault();
 			var setto = jQuery(this).data('setto');
 			jQuery('#'+setto).val('');

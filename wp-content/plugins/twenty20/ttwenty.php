@@ -3,14 +3,14 @@
    Plugin Name: Twenty20 Image Before-After
    Plugin URI: https://wordpress.org/plugins/twenty20/
    Description: Need to highlight the differences between two images? Makes it easy with Twenty20 plugin.
-   Version: 1.5.7
+   Version: 1.5.8
    Author: Zayed Baloch
    Author URI: https://www.zayedbaloch.com/
    License: GPL2
    */
 
 defined('ABSPATH') or die("No script kiddies please!");
-define( 'ZB_T20_VER',   '1.5.7' );
+define( 'ZB_T20_VER',   '1.5.8' );
 define( 'ZB_T20_URL', plugins_url( '', __FILE__ ) );
 define( 'ZB_T20_DOMAIN',  'zb_twenty20' );
 

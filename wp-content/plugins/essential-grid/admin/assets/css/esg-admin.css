@@ -2174,9 +2174,9 @@ input[type="file" i]::-webkit-file-upload-button {
 }
 
 /******************************
-	-	CodeMirror Styling	-
+	-	ESGMirror Styling	-
 ********************************/
-.eg-codemirror-border .CodeMirror{
+.eg-esgmirror-border .ESGMirror{
 	
 }
 
@@ -2203,8 +2203,8 @@ input[type="file" i]::-webkit-file-upload-button {
 ***************************************************************/
 #esg-preview-wrapper .esg-vimeo-frame,
 #esg-preview-wrapper .esg-video-frame,
-#esg-preview-wrapper .esg-youtube-frame	{	margin-top:30px;}
-#esg-preview-wrapper .esg-atoolbar		{	background-color: #e2e1e5 !important}
+#esg-preview-wrapper .esg-youtube-frame	{	margin-top:0px;}
+#esg-preview-wrapper .esg-atoolbar		{	background-color: rgba(226,225,229,0.85) !important} /*#e2e1e5 !important*/
 
 .esg-skineditor-toolbar,
 .esg-atoolbar { display:block;width:100%;height:30px;top:0px;left:0px;position:absolute;z-index:10; padding: 0; background:#e2e1e5;}

@@ -45,12 +45,12 @@ $appt_date_name = date_i18n( $date_format, strtotime( $date ) );
 	echo $calendar_name;
 
 	if ( $appt_timeslot == $all_day_text ):
-		?><p class="appointment-info"><i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo sprintf( esc_html__( '%s on %s','booked' ), $appt_timeslot, $appt_date_name ); ?></p><?php
+		?><p class="appointment-info"><i class="fa-solid fa-calendar-days"></i>&nbsp;&nbsp;&nbsp;<?php echo sprintf( esc_html__( '%s on %s','booked' ), $appt_timeslot, $appt_date_name ); ?></p><?php
 	else:
 		if ( get_option('booked_show_only_titles') && $appt_title ):
-			?><p class="appointment-info"><i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo $appt_date_name; ?></p><?php
+			?><p class="appointment-info"><i class="fa-solid fa-calendar-days"></i>&nbsp;&nbsp;&nbsp;<?php echo $appt_date_name; ?></p><?php
 		else:
-			?><p class="appointment-info"><i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo sprintf( esc_html__( '%s at %s','booked' ), $appt_date_name, $appt_timeslot ); ?></p><?php
+			?><p class="appointment-info"><i class="fa-solid fa-calendar-days"></i>&nbsp;&nbsp;&nbsp;<?php echo sprintf( esc_html__( '%s at %s','booked' ), $appt_date_name, $appt_timeslot ); ?></p><?php
 		endif;
 	endif;
 

@@ -365,9 +365,10 @@ class Essential_Grid_Import {
 				
 				$i_nav_skin['css'] = str_replace(array('\n', '\t'), array(chr(13), chr(9)), $i_nav_skin['css']);
 				//remove first and last "
-				if(substr($i_nav_skin['css'], 0, 1) == '"') $i_nav_skin['css'] = substr($i_nav_skin['css'], 1);
-				if(substr($i_nav_skin['css'], -1) == '"') $i_nav_skin['css'] = substr($i_nav_skin['css'], 0, -1);
-				
+				if(!empty($i_nav_skin['css'])){
+					if(substr($i_nav_skin['css'], 0, 1) == '"') $i_nav_skin['css'] = substr($i_nav_skin['css'], 1);
+					if(substr($i_nav_skin['css'], -1) == '"') $i_nav_skin['css'] = substr($i_nav_skin['css'], 0, -1);
+				}
 				$i_nav_skin['css'] = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', array('Essential_Grid_Import', 'mb_convert_string'), $i_nav_skin['css']);
 				
 				
@@ -573,9 +574,10 @@ class Essential_Grid_Import {
 		
 		$import_global_styles = str_replace(array('\n', '\t'), array(chr(13), chr(9)), $import_global_styles);
 		//remove first and last "
-		if(substr($import_global_styles, 0, 1) == '"') $import_global_styles = substr($import_global_styles, 1);
-		if(substr($import_global_styles, -1) == '"') $import_global_styles = substr($import_global_styles, 0, -1);
-		
+		if(!empty($import_global_styles)){
+			if(substr($import_global_styles, 0, 1) == '"') $import_global_styles = substr($import_global_styles, 1);
+			if(substr($import_global_styles, -1) == '"') $import_global_styles = substr($import_global_styles, 0, -1);
+		}
 		$import_global_styles = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', array('Essential_Grid_Import', 'mb_convert_string'), $import_global_styles);
 		
 		if($append){ //append

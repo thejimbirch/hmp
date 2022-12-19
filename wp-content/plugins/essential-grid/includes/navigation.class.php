@@ -615,9 +615,11 @@ class Essential_Grid_Navigation {
 		
         if(!empty($this->filter)){
             foreach($this->filter as $filter_id => $filter){
+				$_v = Essential_Grid_Base::sanitize_utf8_to_unicode($filter['slug']);
+				
                 $filter_text = ($demo !== false) ? self::translate_demo_filter($filter['slug']) : Essential_Grid_Wpml::strip_category_additions($filter['name']);
-				$sel = (in_array(sanitize_key($filter['slug']), $this->filter_start_select)) ? ' selected' : '';
-                $f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'" data-filter="filter-'.sanitize_key($filter['slug']).'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
+				$sel = (in_array($_v, $this->filter_start_select)) ? ' selected' : '';
+                $f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'" data-filter="filter-'.$_v.'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
             }
         }
         $f .= '</div>';
@@ -716,12 +718,13 @@ class Essential_Grid_Navigation {
 						$filter_text = preg_replace("/\'\,\'/", ' & ', $filter_text);
 	
 					}
+					$_v = Essential_Grid_Base::sanitize_utf8_to_unicode($this->filter[$f_id]['slug']);
 					
-					$sel = (in_array(sanitize_key($this->filter[$f_id]['slug']), $this->filter_start_select)) ? ' selected' : '';
+					$sel = (in_array($_v, $this->filter_start_select)) ? ' selected' : '';
 					$parent_id = (isset($this->filter[$f_id]['parent']) && intval($this->filter[$f_id]['parent']) > 0) ? $this->filter[$f_id]['parent'] : 0;
 					
 					$parent = ($parent_id > 0) ? ' data-pid="'.$parent_id.'"' : '';
-					$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$f_id.'"'.$parent.' data-filter="filter-'.sanitize_key($this->filter[$f_id]['slug']).'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
+					$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$f_id.'"'.$parent.' data-filter="filter-'.$_v.'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
 				}
 			}
 		}else{
@@ -741,12 +744,13 @@ class Essential_Grid_Navigation {
 								$filter_text = preg_replace("/\'\,\'/", ' & ', $filter_text);
 			
 							}
+							$_v = Essential_Grid_Base::sanitize_utf8_to_unicode($filter['slug']);
 							
-							$sel = (in_array(sanitize_key($filter['slug']), $this->filter_start_select)) ? ' selected' : '';
+							$sel = (in_array($_v, $this->filter_start_select)) ? ' selected' : '';
 							$parent_id = (isset($filter['parent']) && intval($filter['parent']) > 0) ? $filter['parent'] : 0;
 							
 							$parent = ($parent_id > 0) ? ' data-pid="'.$parent_id.'"' : '';
-							$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'"'.$parent.' data-filter="filter-'.sanitize_key($filter['slug']).'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
+							$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'"'.$parent.' data-filter="filter-'.$_v.'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
 						}
 					}
 				}
@@ -763,12 +767,13 @@ class Essential_Grid_Navigation {
 							$filter_text = preg_replace("/\'\,\'/", ' & ', $filter_text);
 		
 						}
+						$_v = Essential_Grid_Base::sanitize_utf8_to_unicode($filter['slug']);
 						
-						$sel = (in_array(sanitize_key($filter['slug']), $this->filter_start_select)) ? ' selected' : '';
+						$sel = (in_array($_v, $this->filter_start_select)) ? ' selected' : '';
 						$parent_id = (isset($filter['parent']) && intval($filter['parent']) > 0) ? $filter['parent'] : 0;
 						
 						$parent = ($parent_id > 0) ? ' data-pid="'.$parent_id.'"' : '';
-						$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'"'.$parent.' data-filter="filter-'.sanitize_key($filter['slug']).'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
+						$f .= '<div class="esg-filterbutton'.$sel.'" data-fid="'.$filter_id.'"'.$parent.' data-filter="filter-'.$_v.'"><span>'.$filter_text.'</span><span class="esg-filter-checked"><i class="eg-icon-ok-1"></i></span></div>';
 					}
 				}
 			}

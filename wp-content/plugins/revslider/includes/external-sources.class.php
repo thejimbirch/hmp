@@ -3,7 +3,7 @@
  * External Sources Input Classes for Back and Front End
  * @since: 5.0
  * @author    ThemePunch <info@themepunch.com>
- * @link      https://revolution.themepunch.com/
+ * @link      https://www.sliderrevolution.com/
  * @copyright 2019 ThemePunch
  */
 
@@ -22,21 +22,18 @@ use EspressoDev\InstagramBasicDisplay as InstagramBasicDisplay;
  */
 
 class RevSliderFacebook extends RevSliderFunctions {
-	/**
-	 * Stream Array
-	 *
-	 * @since	1.0.0
-	 * @access	private
-	 * @var		array	$stream		Stream Data Array
-	 */
-	private $stream;
+
+	const URL_FB_AUTH = 'https://updates.themepunch.tools/fb/login.php';
+	const URL_FB_API = 'https://updates.themepunch.tools/fb/api.php';
+
+	const QUERY_SHOW = 'fb_show';
+	const QUERY_TOKEN = 'fb_token';
+	const QUERY_PAGE_ID = 'fb_page_id';
+	const QUERY_CONNECTWITH = 'fb_page_name';
+	const QUERY_ERROR = 'fb_error_message';
 
 	/**
-	* Transient seconds
-	*
-	* @since	1.0.0
-	* @access	private
-	* @var		number	$transient	Transient time in seconds
+	* @var number  Transient time in seconds
 	*/
 	private $transient_sec;
 
@@ -44,131 +41,205 @@ class RevSliderFacebook extends RevSliderFunctions {
 		$this->transient_sec = 	$transient_sec;
 	}
 
-	/**
-	 * Get User ID from its URL
-	 *
-	 * @since	1.0.0
-	 * @param	string	$user_url URL of the Page
-	 */
-	public function get_user_from_url($user_url){
-		$theid = str_replace('https', '', $user_url);
-		$theid = str_replace(array('https', 'http', '://', 'www.', 'facebook', '.com', "/"), '', $user_url);
-		$theid = explode('?', $theid);
+	public function add_actions()
+	{
+		add_action('init', array(&$this, 'do_init'), 5);
+		add_action('admin_footer', array(&$this, 'footer_js'));
+	}
 
-		return trim($theid[0]);
+	/**
+	 * check if we have QUERY_ARG set
+	 * try to login the user
+	 */
+	public function do_init()
+	{
+		// are we on revslider page?
+		if (!isset($_GET['page']) || $_GET['page'] != 'revslider') return;
+
+		//fb returned error
+		if (isset($_GET[self::QUERY_ERROR])) return;
+
+		//we need token and slide ID to proceed with saving token
+		if (!isset($_GET[self::QUERY_TOKEN]) || !isset($_GET['id'])) return;
+
+		$token = $_GET[self::QUERY_TOKEN];
+		$connectwith = isset($_GET[self::QUERY_CONNECTWITH]) ? $_GET[self::QUERY_CONNECTWITH] : '';
+		$page_id = isset($_GET[self::QUERY_PAGE_ID]) ? $_GET[self::QUERY_PAGE_ID] : '';
+		$id = $_GET['id'];
+
+		$slider	= new RevSliderSlider();
+		$slide	= new RevSliderSlide();
+
+		$slide->init_by_id($id);
+		$slider_id = $slide->get_slider_id();
+		if(intval($slider_id) == 0){
+			$_GET[self::QUERY_ERROR] = __('Slider could not be loaded', 'revslider');
+			return;
+		}
+
+		$slider->init_by_id($slider_id);
+		if($slider->inited === false){
+			$_GET[self::QUERY_ERROR] = __('Slider could not be loaded', 'revslider');
+			return;
+		}
+
+		$slider->set_param(array('source', 'facebook', 'token_source'), 'account');
+		$slider->set_param(array('source', 'facebook', 'appId'), $token);
+		$slider->set_param(array('source', 'facebook', 'page_id'), $page_id);
+		$slider->set_param(array('source', 'facebook', 'connect_with'), $connectwith);
+		$slider->update_params([]);
+
+		//redirect
+		$url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		$url = add_query_arg([self::QUERY_TOKEN => false, self::QUERY_PAGE_ID => false, self::QUERY_CONNECTWITH => false, self::QUERY_SHOW => 1], $url);
+		wp_redirect($url);
+		exit();
+	}
+
+	public function footer_js() {
+		// are we on revslider page?
+		if (!isset($_GET['page']) || $_GET['page'] != 'revslider') return;
+
+		if (isset($_GET[self::QUERY_SHOW]) || isset($_GET[self::QUERY_ERROR])) {
+			echo '<script>jQuery(document).ready(function(){ RVS.DOC.one("builderInitialised", function(){RVS.F.mainMode({mode:"sliderlayout", forms:["*sliderlayout*#form_slidercontent"], set:true, uncollapse:true,slide:RVS.S.slideId});RVS.F.updateSliderObj({path:"settings.sourcetype",val:"facebook"});RVS.F.updateEasyInputs({container:jQuery("#form_slidercontent"), trigger:"init", visualUpdate:true});}); });</script>';
+		}
+
+		if (isset($_GET[self::QUERY_ERROR])) {
+			$err = __('Facebook API error: ', 'revslider') . $_GET[self::QUERY_ERROR];
+			echo '<script>jQuery(document).ready(function(){ RVS.DOC.one("builderInitialised", function(){ RVS.F.showInfo({content:"' . $err . '", type:"warning", showdelay:1, hidedelay:5, hideon:"", event:"" }); });});</script>';
+		}
+	}
+
+	public static function get_login_url()
+	{
+		$state = base64_encode(admin_url('admin.php?page=revslider&view=slide&id='.$_GET['id']));
+		return self::URL_FB_AUTH . '?state=' . $state;
+	}
+
+	protected function _make_api_call($args = [])
+	{
+		global $wp_version;
+
+		$response = wp_remote_post(self::URL_FB_API, array(
+			'user-agent' => 'WordPress/'.$wp_version.'; '.get_bloginfo('url'),
+			'body'		 => $args,
+			'timeout'	 => 45
+		));
+
+		if(is_wp_error($response)) {
+			return array(
+				'error' => true,
+				'message' => 'Facebook API error: ' . $response->get_error_message(),
+			);
+		}
+
+		$responseData = json_decode($response['body'], true);
+		if(empty($responseData)) {
+			return array(
+				'error' => true,
+				'message' => 'Facebook API error: Empty response body or wrong data format',
+			);
+		}
+
+		return $responseData;
+	}
+
+	protected function _get_transient_fb_data($requestData)
+	{
+		$transient_name = 'revslider_' . md5(json_encode($requestData));
+		if($this->transient_sec > 0 && false !== ($data = get_transient($transient_name))){
+			return $data;
+		}
+
+		$responseData = $this->_make_api_call($requestData);
+		//code that use this function do not process errors
+		//return empty array
+		if($responseData['error']){
+			return array();
+		}
+
+		if(isset($responseData['data'])){
+			set_transient($transient_name, $responseData['data'], $this->transient_sec);
+			return $responseData['data'];
+		}
+
+		return array();
 	}
 
 	/**
 	 * Get Photosets List from User
 	 *
-	 * @since	1.0.0
-	 * @param	string	$user_id 	Facebook User id (not name)
-	 * @param	int	$item_count 	number of photos to pull
+	 * @param	string	$access_token 	page access token
+	 * @param	string	$page_id 	page id
+	 * @return	mixed
 	 */
-	public function get_photo_sets($user_id, $item_count = 10, $access_token){
-		//photoset params
-		$url = "https://graph.facebook.com/$user_id/albums?access_token=" . $access_token;
-		$photo_sets_list = json_decode(wp_remote_fopen($url));
-		if(!empty($photo_sets_list->error->message)){
-			return array("error",$photo_sets_list->error->message);
-		}
-		return $this->get_val($photo_sets_list, 'data');
-	}
-
-	/**
-	 * Get Photoset Photos
-	 *
-	 * @since	5.1.1
-	 * @param	string	$photo_set_id 	Photoset ID
-	 * @param	int		$item_count 	number of photos to pull
-	 */
-	public function get_photo_set_photos($photo_set_id, $item_count = 10, $access_token){
-		$url = "https://graph.facebook.com/".$photo_set_id."/photos?fields=photos&access_token=" . $access_token ."&fields=id,from,message,picture,images,link,name,icon,privacy,type,status_type,application,created_time,updated_time,is_hidden,is_expired,comments.limit(1).summary(true),likes.limit(1).summary(true)";
-
-		$transient_name = 'revslider_' . md5($url);
-
-		if($this->transient_sec > 0 && false !== ($data = get_transient($transient_name))){
-			return $data;
-		}
-
-		$photo_set_photos = json_decode(wp_remote_fopen($url));
-
-		$data = $this->get_val($photo_set_photos, 'data');
-		if($data !== ''){
-			set_transient($transient_name, $data, $this->transient_sec);
-		}
-
-		return $data;
+	public function get_photo_sets($access_token, $page_id){
+		return $this->_make_api_call(array(
+			'token' => $access_token,
+			'page_id' => $page_id,
+			'action' => 'albums',
+		));
 	}
 
 	/**
 	 * Get Photosets List from User as Options for Selectbox
 	 *
-	 * @since	1.0.0
-	 * @param	string	$user_url 	Facebook User id (not name)
-	 * @param	int	$item_count 	number of photos to pull
+	 * @param	string	$access_token 	page access token
+	 * @param	string	$page_id 	page id
+	 * @return	mixed	options html string | array('error' => true, 'message' => '...');
 	 */
-	public function get_photo_set_photos_options($user_url, $current_album, $access_token, $item_count = 99){
-		$user_id = $this->get_user_from_url($user_url);
-		$photo_sets = $this->get_photo_sets($user_id, 999, $access_token);
+	public function get_photo_set_photos_options($access_token, $page_id){
+		$photo_sets = $this->get_photo_sets($access_token, $page_id);
 
-		if(isset( $photo_sets[0] ) && $photo_sets[0] == "error"){
+		if($photo_sets['error']){
 			return $photo_sets;
 		}
 
-		if(empty($current_album)) $current_album = '';
-
 		$return = array();
-		if(is_array($photo_sets)){
-			foreach($photo_sets as $photo_set){
-				$return[] = '<option title="'.$this->get_val($photo_set, 'name').'" '.selected($this->get_val($photo_set, 'id'), $current_album, false).' value="'.$this->get_val($photo_set, 'id').'">'.$this->get_val($photo_set, 'name').'</option>"';
+		if(is_array($photo_sets['data'])){
+			foreach($photo_sets['data'] as $photo_set){
+				$return[] = '<option title="'.$photo_set['name'].'" value="'.$photo_set['id'].'">'.$photo_set['name'].'</option>"';
 			}
 		}
 		return $return;
 	}
 
+	/**
+	 * Get Photoset Photos
+	 *
+	 * @param	string	$access_token 	page access token
+	 * @param	string	$album_id 	Album ID
+	 * @param	int 	$item_count 	items count
+	 * @return	array
+	 */
+	public function get_photo_set_photos($access_token, $album_id, $item_count = 8){
+		$requestData = array(
+			'token' => $access_token,
+			'action' => 'photos',
+			'album_id' => $album_id,
+			'limit' => $item_count,
+		);
+		return $this->_get_transient_fb_data($requestData);
+	}
 
 	/**
 	 * Get Feed
 	 *
-	 * @since	1.0.0
-	 * @param	string	$user 	User ID
-	 * @param	int		$item_count 	number of itmes to pull
+	 * @param	string	$access_token 	page access token
+	 * @param	string	$page_id 	page id
+	 * @param	int 	$item_count 	items count
+	 * @return	array
 	 */
-	public function get_photo_feed($user, $access_token, $item_count = 10){
-		$url = "https://graph.facebook.com/$user/feed?access_token=" . $access_token ."&fields=full_picture,picture,attachments{media,media_type,url},icon,message,likes.limit(1).summary(true),comments.limit(1).summary(true)";
-
-		$transient_name = 'revslider_' . md5($url);
-		if($this->transient_sec > 0 && false !== ($data = get_transient($transient_name))){
-			return $data;
-		}
-
-		$feed = json_decode(wp_remote_fopen($url));
-
-		$data = $this->get_val($feed, 'data');
-		if($data !== ''){
-			set_transient($transient_name, $data, $this->transient_sec);
-		}
-
-		return $data;
+	public function get_photo_feed($access_token, $page_id, $item_count = 8){
+		$requestData = array(
+			'token' => $access_token,
+			'page_id' => $page_id,
+			'action' => 'feed',
+			'limit' => $item_count,
+		);
+		return $this->_get_transient_fb_data($requestData);
 	}
 
-	/**
-	 * Decode URL from feed
-	 *
-	 * @since	1.0.0
-	 * @param	string	$url 	facebook Output Data
-	 */
-	private function decode_facebook_url($url){
-		$url = str_replace('u00253A', ':', $url);
-		$url = str_replace('\u00255C\u00252F', '/', $url);
-		$url = str_replace('u00252F', '/', $url);
-		$url = str_replace('u00253F', '?', $url);
-		$url = str_replace('u00253D', '=', $url);
-		$url = str_replace('u002526', '&', $url);
-
-		return $url;
-	}
 }  // End Class
 
 /**
@@ -490,7 +561,12 @@ if(!function_exists('rev_instagram_autoloader')){
 	}
 }
 
-class RevSliderInstagram  extends RevSliderFunctions {
+class RevSliderInstagram extends RevSliderFunctions {
+
+    const QUERY_SHOW = 'ig_show';
+    const QUERY_TOKEN = 'ig_token';
+    const QUERY_CONNECTWITH = 'ig_user';
+    const QUERY_ERROR = 'ig_error_message';
 
 	/**
 	 * API key
@@ -543,6 +619,87 @@ class RevSliderInstagram  extends RevSliderFunctions {
 		$this->transient_sec = $transient_sec;
 		$this->transient_token_sec = 86400 * 30; // 30 days
 	}
+
+	public function add_actions()
+    {
+        add_action('init', array(&$this, 'do_init'), 5);
+        add_action('admin_footer', array(&$this, 'footer_js'));
+    }
+
+    /**
+     * check if we have QUERY_ARG set
+     * try to login the user
+     */
+    public function do_init()
+    {
+	    // are we on revslider page?
+	    if (!isset($_GET['page']) || $_GET['page'] != 'revslider') return;
+
+	    //instagram returned error
+	    if (isset($_GET[self::QUERY_ERROR])) return;
+
+	    //we need token and slide ID to proceed with saving token
+	    if (!isset($_GET[self::QUERY_TOKEN]) || !isset($_GET['id'])) return;
+
+        $token = $_GET[self::QUERY_TOKEN];
+        $connectwith = $_GET[self::QUERY_CONNECTWITH];
+        $id = $_GET['id'];
+
+        $slider	= new RevSliderSlider();
+        $slide	= new RevSliderSlide();
+
+        $slide->init_by_id($id);
+
+        $slider_id = $slide->get_slider_id();
+        if(intval($slider_id) == 0){
+            $_GET[self::QUERY_ERROR] = __('Slider could not be loaded', 'revslider');
+            return;
+        }
+
+        $slider->init_by_id($slider_id);
+        if($slider->inited === false){
+            $_GET[self::QUERY_ERROR] = __('Slider could not be loaded', 'revslider');
+            return;
+        }
+
+        $slider->set_param(array('source', 'instagram', 'token_source'), 'account');
+        $slider->set_param(array('source', 'instagram', 'token'), $token);
+        $slider->set_param(array('source', 'instagram', 'connect_with'), $connectwith);
+        $slider->update_params([]);
+
+        //redirect
+        $url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+        $url = add_query_arg([self::QUERY_TOKEN => false, self::QUERY_SHOW => 1], $url);
+        wp_redirect($url);
+        exit();
+    }
+
+    public function footer_js() {
+	    // are we on revslider page?
+	    if (!isset($_GET['page']) || $_GET['page'] != 'revslider') return;
+
+	    if (isset($_GET[self::QUERY_SHOW]) || isset($_GET[self::QUERY_ERROR])) {
+            echo '<script>jQuery(document).ready(function(){ RVS.DOC.one("builderInitialised", function(){RVS.F.mainMode({mode:"sliderlayout", forms:["*sliderlayout*#form_slidercontent"], set:true, uncollapse:true,slide:RVS.S.slideId});RVS.F.updateSliderObj({path:"settings.sourcetype",val:"instagram"});RVS.F.updateEasyInputs({container:jQuery("#form_slidercontent"), trigger:"init", visualUpdate:true});}); });</script>';
+        }
+
+        if (isset($_GET[self::QUERY_ERROR])) {
+            $err = __('Instagram Reports: ', 'revslider') . $_GET[self::QUERY_ERROR];
+            echo '<script>jQuery(document).ready(function(){ RVS.DOC.one("builderInitialised", function(){ RVS.F.showInfo({content:"' . $err . '", type:"warning", showdelay:1, hidedelay:5, hideon:"", event:"" }); });});</script>';
+        }
+    }
+
+	public static function get_login_url()
+    {
+        $app_id = '677807423170942';
+        $redirect = 'https://updates.themepunch.tools/ig/auth.php';
+        $state = base64_encode(admin_url('admin.php?page=revslider&view=slide&id='.$_GET['id']));
+        return sprintf(
+            'https://api.instagram.com/oauth/authorize?app_id=%s&redirect_uri=%s&response_type=code&scope=user_profile,user_media&state=%s',
+            $app_id,
+            $redirect,
+            $state
+        );
+    }
 
 	/**
 	 * Get Instagram Users Pictures CSV list
@@ -615,17 +772,18 @@ class RevSliderInstagram  extends RevSliderFunctions {
 	 * Get Instagram User Pictures
 	 *
 	 * @since 3.0
+	 * @param int $slider_id slider ID
 	 * @param string $token Instagram Access Token
 	 * @param string $count media count
 	 * @param string $orig_image
 	 * @return mixed
 	 */
-	public function get_public_photos($token, $count, $orig_image = ''){
+	public function get_public_photos($slider_id, $token, $count, $orig_image = ''){
 
         $this->_refresh_token($token);
         $instagram = $this->getInstagram($token);
 
-		$cacheKey = 'instagram' . '-' . $token . '-' . $count;
+		$cacheKey = 'instagram' . '-' . $slider_id . '-' . $token . '-' . $count;
         $transient_name = 'revslider_'. md5($cacheKey);
         if($this->transient_sec > 0 && false !== ($data = get_transient($transient_name))){
             $this->stream = $data;
@@ -643,7 +801,11 @@ class RevSliderInstagram  extends RevSliderFunctions {
             set_transient($transient_name, $this->stream, $this->transient_sec);
             return $this->stream;
         }else{
-            _e('Instagram reports: Please check the settings','revslider');
+            $err = translate('Instagram reports: Please check the settings','revslider');
+            if(isset($medias->error)){
+                $err = $medias->error->message;
+            }
+            echo $err;
             return false;
         }
 	}
@@ -831,7 +993,8 @@ class RevSliderInstagram  extends RevSliderFunctions {
 		foreach ($photos as $photo) {
 			if($count > 0){
 				$count--;
-                $shortcode = '';
+				$shortcode = '';
+				
                 preg_match('/.+\/p\/(.+)?\//m', $photo->permalink, $matches);
                 if (isset($matches[1])) {
                     $shortcode = $matches[1];
@@ -1428,7 +1591,7 @@ class RevSliderFlickr extends RevSliderFunctions {
 	 * @param    string    $user_id 	flicker User id (not name)
 	 * @param    int       $item_count 	number of photos to pull
 	*/
-	public function get_photo_sets($user_id, $item_count = 10, $current_photoset){
+	public function get_photo_sets($user_id, $item_count, $current_photoset){ //item count default is 10
 		//photoset params
 		$photo_set_params = $this->api_param_defaults + array(
 			'method'  => 'flickr.photosets.getList',

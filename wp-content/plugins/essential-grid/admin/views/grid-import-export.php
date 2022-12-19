@@ -76,7 +76,7 @@ if (isset($_FILES['import_file'])) {
 			<div> 
 				<div class="eg-cs-tbc-left"><esg-llabel><span><?php echo _e('Skins ', EG_TEXTDOMAIN); ?></span></esg-llabel></div>
 				<div class="eg-cs-tbc" style="padding-left:15px">
-					<a href="https://essential.themepunch.com/example-skins-download/" class="esg-btn esg-purple" target="_blank" id="esg-download-skins"><?php _e('Download Fresh Skins', EG_TEXTDOMAIN); ?></a>
+					<a href="<?php echo admin_url('admin.php'); ?>?page=essential-grid-item-skin" class="esg-btn esg-purple" id="esg-download-skins"><?php _e('Download Fresh Skins', EG_TEXTDOMAIN); ?></a>
 				</div>
 			</div>
 		</div>

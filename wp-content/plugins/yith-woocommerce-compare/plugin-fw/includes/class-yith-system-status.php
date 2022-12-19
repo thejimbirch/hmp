@@ -55,9 +55,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Main plugin Instance
 		 *
+		 * @author Alberto Ruggiero
 		 * @return YITH_System_Status
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public static function instance() {
 			if ( is_null( self::$instance ) ) {
@@ -70,9 +70,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Constructor
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function __construct() {
 
@@ -100,9 +100,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Set requirements labels
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function set_requirements_labels() {
 
@@ -127,9 +127,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Add "System Information" submenu page under YITH Plugins
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function add_submenu_page() {
 
@@ -156,9 +156,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Add "System Information" page template under YITH Plugins
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function show_information_panel() {
 
@@ -171,9 +171,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Perform system status check
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function check_system_status() {
 
@@ -272,9 +272,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 * @param string $plugin_name  The name of the plugin.
 		 * @param array  $requirements Array of plugin requirements.
 		 *
+		 * @author Alberto Ruggiero
 		 * @return void
 		 * @since  1.0.0
-		 * @author Alberto Ruggiero
 		 */
 		public function add_requirements( $plugin_name, $requirements ) {
 
@@ -292,9 +292,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Manages notice dismissing
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function enqueue_scripts() {
 			$script_path = defined( 'YIT_CORE_PLUGIN_URL' ) ? YIT_CORE_PLUGIN_URL : get_template_directory_uri() . '/core/plugin-fw';
@@ -318,9 +318,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Show system notice
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function activate_system_notice() {
 
@@ -356,9 +356,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Get system information
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  array
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function get_system_info() {
 			$tls             = $this->get_tls_version();
@@ -403,11 +403,16 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		/**
 		 * Get log file
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function create_log_file() {
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['nonce'], $_POST['file'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'yith-export-log' ) ) {
+				wp_send_json( array( 'file' => false ) );
+				exit;
+			}
+
 			try {
 
 				global $wp_filesystem;
@@ -419,7 +424,7 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 
 				$download_file  = false;
 				$file_content   = '';
-				$requested_file = $_POST['file']; //phpcs:ignore
+				$requested_file = sanitize_text_field( wp_unslash( $_POST['file'] ) );
 
 				switch ( $requested_file ) {
 					case 'error_log':
@@ -431,9 +436,12 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 				}
 
 				if ( '' !== $file_content ) {
-					$file          = wp_upload_dir()['basedir'] . '/' . $requested_file . '.txt';
-					$download_file = wp_upload_dir()['baseurl'] . '/' . $requested_file . '.txt';
-					$wp_filesystem->put_contents( $file, $file_content );
+					$domain        = str_replace( array( 'http://', 'https://' ), '', network_site_url() );
+					$hash          = substr( wp_hash( $domain ), 0, 16 );
+					$file          = wp_upload_dir()['basedir'] . '/log-' . $hash . '.txt';
+					$download_file = wp_upload_dir()['baseurl'] . '/log-' . $hash . '.txt';
+
+					$r = $wp_filesystem->put_contents( $file, $file_content );
 				}
 
 				wp_send_json( array( 'file' => $download_file ) );
@@ -447,9 +455,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 *
 		 * @param string $memory_size Memory size to convert.
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  integer
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function memory_size_to_num( $memory_size ) {
 			$unit = strtoupper( substr( $memory_size, - 1 ) );
@@ -478,9 +486,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 * @param string $key   Requirement Key.
 		 * @param mixed  $value Requirement value.
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function format_requirement_value( $key, $value ) {
 
@@ -505,9 +513,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 * @param array  $item  Requirement item.
 		 * @param string $label Requirement label.
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function print_error_messages( $key, $item, $label ) {
 			?>
@@ -539,9 +547,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 * @param array  $item  Requirement item.
 		 * @param string $label Requirement label.
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function print_solution_suggestion( $key, $item, $label ) {
 			switch ( $key ) {
@@ -586,9 +594,9 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 		 *
 		 * @param string $key Requirement Key.
 		 *
+		 * @author  Alberto Ruggiero
 		 * @return  void
 		 * @since   1.0.0
-		 * @author  Alberto Ruggiero
 		 */
 		public function print_warning_messages( $key ) {
 			switch ( $key ) {
@@ -702,6 +710,98 @@ if ( ! class_exists( 'YITH_System_Status' ) ) {
 			return ! ! $ip ? $ip : 'n/a';
 		}
 
+		/**
+		 * Retrieve plugin-fw info, such as version and loaded-by.
+		 *
+		 * @return array
+		 */
+		public function get_plugin_fw_info() {
+			$version        = yith_plugin_fw_get_version();
+			$loaded_by      = basename( dirname( YIT_CORE_PLUGIN_PATH ) );
+			$loaded_by_init = trailingslashit( dirname( YIT_CORE_PLUGIN_PATH ) ) . 'init.php';
+			if ( file_exists( $loaded_by_init ) ) {
+				$plugin_data = get_plugin_data( $loaded_by_init );
+				$loaded_by   = $plugin_data['Name'] ?? $loaded_by;
+			}
+
+			return compact( 'version', 'loaded_by' );
+		}
+
+		/**
+		 * Retrieve database info, such as MySQL version and database size.
+		 *
+		 * @return array
+		 */
+		public function get_database_info() {
+
+			global $wpdb;
+
+			$database_version = $wpdb->get_row( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				'SELECT
+						@@GLOBAL.version_comment AS string,
+						@@GLOBAL.version AS number',
+				ARRAY_A
+			);
+
+			$tables        = array();
+			$database_size = array();
+
+			// It is not possible to get the database name from some classes that replace wpdb (e.g., HyperDB)
+			// and that is why this if condition is needed.
+			if ( defined( 'DB_NAME' ) ) {
+				$database_table_information = $wpdb->get_results( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+					$wpdb->prepare(
+						"SELECT
+					    table_name AS 'name',
+						engine AS 'engine',
+					    round( ( data_length / 1024 / 1024 ), 2 ) 'data',
+					    round( ( index_length / 1024 / 1024 ), 2 ) 'index',
+       					round( ( data_free / 1024 / 1024 ), 2 ) 'free'
+					FROM information_schema.TABLES
+					WHERE table_schema = %s
+					ORDER BY name ASC;",
+						DB_NAME
+					)
+				);
+
+				$database_size = array(
+					'data'  => 0,
+					'index' => 0,
+					'free'  => 0,
+				);
+
+				$site_tables_prefix = $wpdb->get_blog_prefix( get_current_blog_id() );
+				$global_tables      = $wpdb->tables( 'global', true );
+				foreach ( $database_table_information as $table ) {
+					// Only include tables matching the prefix of the current site, this is to prevent displaying all tables on a MS install not relating to the current.
+					if ( is_multisite() && 0 !== strpos( $table->name, $site_tables_prefix ) && ! in_array( $table->name, $global_tables, true ) ) {
+						continue;
+					}
+
+					$tables[ $table->name ] = array(
+						'data'   => $table->data,
+						'index'  => $table->index,
+						'free'   => $table->free,
+						'engine' => $table->engine,
+					);
+
+					$database_size['data']  += $table->data;
+					$database_size['index'] += $table->index;
+					$database_size['free']  += $table->free;
+				}
+			}
+
+			return apply_filters(
+				'yith_database_info',
+				array(
+					'mysql_version'        => $database_version['number'],
+					'mysql_version_string' => $database_version['string'],
+					'database_tables'      => $tables,
+					'database_size'        => $database_size,
+				)
+			);
+		}
+
 	}
 }
 
@@ -709,9 +809,9 @@ if ( ! function_exists( 'YITH_System_Status' ) ) {
 	/**
 	 * Single instance of YITH_System_Status
 	 *
+	 * @author Alberto Ruggiero
 	 * @return YITH_System_Status
 	 * @since  1.0
-	 * @author Alberto Ruggiero
 	 */
 	function YITH_System_Status() { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 		return YITH_System_Status::instance();

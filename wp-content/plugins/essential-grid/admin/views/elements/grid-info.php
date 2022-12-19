@@ -135,7 +135,7 @@ ACTIVATE THIS PRODUCT
 
 <script type="text/javascript">
 function esg_grid_info_ready_function() {
-	jQuery('#tp-validation-box').click(function() {
+	jQuery('#tp-validation-box').on('click',function() {
 		jQuery(this).css({cursor:"default"});
 		if (jQuery('#rs-validation-wrapper').css('display')=="none") {
 			jQuery('#tp-before-validation').hide();

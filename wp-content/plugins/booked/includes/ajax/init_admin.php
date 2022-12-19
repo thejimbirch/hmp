@@ -953,7 +953,7 @@ if(!class_exists('Booked_Admin_AJAX')) {
 						$time_format = get_option('time_format');
 
 						echo '<span class="timeslot" data-timeslot="'.$timeslot.'">';
-						echo '<span class="slotsBlock"><span class="changeCount minus" data-count="-1"><i class="booked-icon booked-icon-minus-circle"></i></span><span class="count"><em>'.$count.'</em> ' . _n('Space Available','Spaces Available',$count,'booked') . '</span><span class="changeCount add" data-count="1"><i class="booked-icon booked-icon-plus-circle"></i></span></span>';
+						echo '<span class="slotsBlock"><span class="changeCount minus" data-count="-1"><i class="fa-solid fa-circle-minus"></i></span><span class="count"><em>'.$count.'</em> ' . _n('Space Available','Spaces Available',$count,'booked') . '</span><span class="changeCount add" data-count="1"><i class="fa-solid fa-circle-plus"></i></span></span>';
 
 						do_action( 'booked_single_custom_timeslot_start', $this_timeslot, $timeslot, $calendar_id );
 
@@ -966,14 +966,14 @@ if(!class_exists('Booked_Admin_AJAX')) {
 						}
 
 						if ($time[0] == '0000' && $time[1] == '2400'):
-							echo '<span class="start"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . strtoupper(esc_html__('All day','booked')) . '</span>';
+							echo '<span class="start"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . strtoupper(esc_html__('All day','booked')) . '</span>';
 						else :
-							echo '<span class="start"><i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;' . date_i18n($time_format,strtotime('2014-01-01 '.$time[0])) . '</span> &ndash; <span class="end">' . date_i18n($time_format,strtotime('2014-01-01 '.$time[1])) . '</span>';
+							echo '<span class="start"><i class="fa-solid fa-clock"></i>&nbsp;&nbsp;' . date_i18n($time_format,strtotime('2014-01-01 '.$time[0])) . '</span> &ndash; <span class="end">' . date_i18n($time_format,strtotime('2014-01-01 '.$time[1])) . '</span>';
 						endif;
 
 						do_action( 'booked_single_custom_timeslot_end', $this_timeslot, $timeslot, $calendar_id );
 
-						echo '<span class="delete"><i class="booked-icon booked-icon-close"></i></span>';
+						echo '<span class="delete"><i class="fa-solid fa-xmark"></i></span>';
 						echo '</span>';
 
 					endforeach;

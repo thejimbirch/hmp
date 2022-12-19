@@ -72,22 +72,22 @@ if(!empty($img1) && !empty($img2)){
   $output .= '<img class="skip-lazy" src="'. wp_get_attachment_url( $img1 ) .'"'.$img1_alt.' />';
   $output .= '<img class="skip-lazy" src="'. wp_get_attachment_url( $img2 ) .'"'.$img2_alt.' />';
   $output .= '</div>';
-  $output .= '<script>jQuery(window).on("load", function(){';
+  $output .= '<script>jQuery( document ).ready(function( $ ) {';
   if($direction == "vertical"){
-    $output .= 'jQuery(".twentytwenty-container.'.$t20ID.'[data-orientation=\'vertical\']").twentytwenty({default_offset_pct: ' . $offset . $data_vertical . $isHover . '});';
+    $output .= '$(".twentytwenty-container.'.$t20ID.'[data-orientation=\'vertical\']").twentytwenty({default_offset_pct: ' . $offset . $data_vertical . $isHover . '});';
   }else{
-    $output .= 'jQuery(".twentytwenty-container.'.$t20ID.'[data-orientation!=\'vertical\']").twentytwenty({default_offset_pct: '. $offset . $isHover .'});';
+    $output .= '$(".twentytwenty-container.'.$t20ID.'[data-orientation!=\'vertical\']").twentytwenty({default_offset_pct: '. $offset . $isHover .'});';
   }
   
   if($before){
-    $output .= 'jQuery(".' . $t20ID . ' .twentytwenty-before-label").html("'. $before .'");';
+    $output .= '$(".' . $t20ID . ' .twentytwenty-before-label").html("'. $before .'");';
   }else{
-    $output .= 'jQuery(".' . $t20ID . ' .twentytwenty-overlay").hide();';
+    $output .= '$(".' . $t20ID . ' .twentytwenty-overlay").hide();';
   }
   if($after){
-    $output .= 'jQuery(".' . $t20ID . ' .twentytwenty-after-label").html("'. $after .'");';
+    $output .= '$(".' . $t20ID . ' .twentytwenty-after-label").html("'. $after .'");';
   }else{
-    $output .= 'jQuery(".' . $t20ID . ' .twentytwenty-overlay").hide();';
+    $output .= '$(".' . $t20ID . ' .twentytwenty-overlay").hide();';
   }
   $output .= '});</script></div>';
 }else{

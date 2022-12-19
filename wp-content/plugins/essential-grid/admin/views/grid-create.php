@@ -139,7 +139,7 @@ $esg_default_skins = $nav_skin->get_default_navigation_skins();
 <!--
 LEFT SETTINGS
 -->
-<h2 class="topheader"><?php echo $title; ?><a target="_blank" class="esg-help-button esg-btn esg-red" href="http://essential.themepunch.com/documentation"><i class="material-icons">help</i><?php _e('Help Center', EG_TEXTDOMAIN); ?></a></h2>
+<h2 class="topheader"><?php echo $title; ?><a target="_blank" class="esg-help-button esg-btn esg-red" href="https://www.themepunch.com/support-center/essential-grid/#documentation"><i class="material-icons">help</i><?php _e('Help Center', EG_TEXTDOMAIN); ?></a></h2>
 <div class="eg-pbox esg-box" style="width:100%;min-width:500px">
 	<div class="esg-box-title"><span><?php _e('Layout Composition', EG_TEXTDOMAIN); ?></span><div class="eg-pbox-arrow"></div></div>
 	<div class="esg-box-inside" style="padding:0px !important;margin:0px !important;height:100%;position:relative;background:#e1e1e1">
@@ -367,7 +367,7 @@ LEFT SETTINGS
 										--><div class="esg-staytog"><input type="radio" name="stream-source-type" value="twitter" class="esg-source-choose-wrapper" <?php checked($base->getVar($grid, array('postparams', 'stream-source-type'), 'instagram'), 'twitter'); ?>><span class="inplabel"><?php _e('Twitter', EG_TEXTDOMAIN); ?></span><div class="space18"></div></div><!--
 										--><div class="esg-staytog"><input type="radio" name="stream-source-type" value="behance" class="esg-source-choose-wrapper" <?php checked($base->getVar($grid, array('postparams', 'stream-source-type'), 'instagram'), 'behance'); ?>><span class="inplabel"><?php _e('Behance', EG_TEXTDOMAIN); ?></span><div class="space18"></div></div>
 									<div id="eg-source-youtube-message"><label></label><span class="description"><?php _e('The "YouTube Stream" content source is used to display a full stream of videos from a channel/playlist.', EG_TEXTDOMAIN); ?></span></div>
-									<div id="eg-source-vimeo-message"><label></label><span class="description"><?php _e('The "Vimeo Stream" content source is used to display a full stream of videos from a user/album/group/channel.', EG_TEXTDOMAIN); ?></span></div>
+									<div id="eg-source-vimeo-message"><label></label><span class="description"><?php _e('The "Vimeo Stream" content source is used to display a full stream of max 60 videos from a user/album/group/channel.', EG_TEXTDOMAIN); ?></span></div>
 								</div>
 							</div>
 
@@ -504,9 +504,27 @@ LEFT SETTINGS
 							<div class=" instagram_user">
 								<div class="eg-cs-tbc-left"><esg-llabel><span><?php _e('Stream', EG_TEXTDOMAIN); ?></span></esg-llabel></div>
 								<div class="eg-cs-tbc">
-										<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put in the Facebook Instagram API key', EG_TEXTDOMAIN); ?>"><?php _e('API Key', EG_TEXTDOMAIN); ?></label><!--
+                                        <label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Choose Instagram Token Source', EG_TEXTDOMAIN); ?>"><?php _e('Token Source', EG_TEXTDOMAIN); ?></label><!--
+									--><select name="instagram-token-source">
+                                            <option value='account' <?php selected( $base->getVar($grid, array('postparams', 'instagram-token-source'), 'account'), 'account');?>><?php _e('From Account', EG_TEXTDOMAIN);?></option>
+                                            <option value='manual' <?php selected( $base->getVar($grid, array('postparams', 'instagram-token-source'), 'account'), 'manual');?>><?php _e('Manual', EG_TEXTDOMAIN);?></option>
+                                        </select>
+                                    <div class="div13"></div>
+
+                                    <div class="instagram-token-source instagram-token-source-account" style="display: none">
+                                        <label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Connected Instagram Account', EG_TEXTDOMAIN); ?>"><?php _e('Connected To', EG_TEXTDOMAIN); ?></label><!--
+                                        --><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'instagram-connected-to'), ''); ?>" name="instagram-connected-to"  placeholder="<?php _e('Not yet Connected', EG_TEXTDOMAIN);?>" disabled >
+                                        <div class="div13"></div>
+
+                                        <a id="instagram_connect_account" class="esg-btn esg-purple eg-instagram-connect-account" href="<?php echo Essential_Grid_Instagram::get_login_url(); ?>">Connect an Instagram Account</a><div class="space18"></div><!--
+                                        --><span class="description"><?php _e('You will be redirected to Instagram and then back to the grid settings page. Your current settings will be auto saved.', EG_TEXTDOMAIN);?></span>
+                                    </div>
+
+                                    <div class="instagram-token-source instagram-token-source-manual" style="display: none">
+                                    	<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put in the Facebook Instagram API key', EG_TEXTDOMAIN); ?>"><?php _e('API Key', EG_TEXTDOMAIN); ?></label><!--
 										--><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'instagram-api-key'), ''); ?>" name="instagram-api-key"><div class="space18"></div><!--
-										--><span class="description"><?php _e('Please <a target="_blank" href="https://www.themepunch.com/faq/instagram-stream-setup-instructions-with-access-token/">generate</a> your Instagram Access Token in Facebook.', EG_TEXTDOMAIN); ?></span>
+										--><span class="description"><?php _e('Please check this <a target="_blank" href="https://www.themepunch.com/faq/instagram-stream-setup-instructions-with-access-token/">FAQ</a> on how to generate your Instagram Access Token in Facebook manually.', EG_TEXTDOMAIN); ?></span>
+                                    </div>
 								</div>
 							</div>
 
@@ -531,7 +549,7 @@ LEFT SETTINGS
 								<div class="eg-cs-tbc-left"><esg-llabel><span><?php _e('API', EG_TEXTDOMAIN); ?></span></esg-llabel></div>
 								<div class="eg-cs-tbc">
 									<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put in your Flickr API Key', EG_TEXTDOMAIN); ?>"><?php _e('Flickr API Key', EG_TEXTDOMAIN); ?></label><!--
-									--><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-api-key'), ''); ?>" name="flickr-api-key"><div class="space18"></div><!--
+									--><input style="width:335px" type="text" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-api-key'), ''); ?>" name="flickr-api-key"><div class="space18"></div><!--
 									--><span class="description"><?php _e('Read <a target="_blank" href="http://weblizar.com/get-flickr-api-key/">here</a> how to get your Flickr API key', EG_TEXTDOMAIN); ?></span>
 								</div>
 							</div>
@@ -548,20 +566,21 @@ LEFT SETTINGS
 									<div id="eg-external-source-flickr-sources">
 										<div id="eg-external-source-flickr-publicphotos-url-wrap">
 											<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put the URL of the flickr User', EG_TEXTDOMAIN); ?>"><?php _e('Flickr User Url', EG_TEXTDOMAIN); ?></label><!--
-											--><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-user-url')); ?>" name="flickr-user-url">
+											--><input type="text" style="width:335px" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-user-url')); ?>" name="flickr-user-url">
 										</div>
 										<div id="eg-external-source-flickr-photosets-wrap">
+											<div class="div13"></div>
 											<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Select the photoset you want to pull the data from', EG_TEXTDOMAIN); ?>"><?php _e('Select Photoset', EG_TEXTDOMAIN); ?></label><input type="hidden" name="flickr-photoset" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-photoset'), ''); ?>"><!--
-											--><select name="flickr-photoset-select">
+											--><select style="width:335px" name="flickr-photoset-select">
 											</select>
 										</div>
 										<div id="eg-external-source-flickr-gallery-url-wrap">
 											<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put the URL of the flickr Gallery', EG_TEXTDOMAIN); ?>"><?php _e('Flickr Gallery Url', EG_TEXTDOMAIN); ?></label><!--
-											--><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-gallery-url')); ?>" name="flickr-gallery-url">
+											--><input type="text" style="width:335px" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-gallery-url')); ?>" name="flickr-gallery-url">
 										</div>
 										<div id="eg-external-source-flickr-group-url-wrap">
 											<label class="eg-new-label eg-tooltip-wrap" title="<?php _e('Put the URL of the flickr Group', EG_TEXTDOMAIN); ?>"><?php _e('Flickr Group Url', EG_TEXTDOMAIN); ?></label><!--
-											--><input type="text" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-group-url')); ?>" name="flickr-group-url">
+											--><input type="text" style="width:335px" value="<?php echo $base->getVar($grid, array('postparams', 'flickr-group-url')); ?>" name="flickr-group-url">
 										</div>
 									</div>
 								</div>
@@ -912,7 +931,10 @@ If you are a current API user you will still be able to fetch the data though.',
 			<?php }
 
 			if( function_exists("wp_rml_dropdown") ){
-				$rml_items = wp_rml_dropdown($base->getVar($grid, array('postparams', 'rml-source-type'), '-1'),array(RML_TYPE_COLLECTION),true); ?>
+				$selected_rml = $base->getVar($grid, array('postparams', 'rml-source-type'), '-1');
+				$selected_rml = intval($selected_rml);
+				$rml_items = wp_rml_dropdown($selected_rml,array(RML_TYPE_COLLECTION),true); 
+			?>
 				<div id="all-rml-wrap">
 					<div id="rml-source-wrap">
 						<div class="">
@@ -1209,7 +1231,7 @@ If you are a current API user you will still be able to fetch the data though.',
 					punchgs.TweenLite.to(jQuery(this),0.3,{x:0,ease:punchgs.Power3.easeInOut});
 				})
 				/*
-				jQuery('#createthumbnail').click(function() {
+				jQuery('#createthumbnail').on('click',function() {
 					AdminEssentials.buildThumbnail();
 				});
 				*/

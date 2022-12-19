@@ -10,10 +10,15 @@
  
 if(!defined('ABSPATH')) exit();
 
-$rs_f = new RevSliderFunctions();
+if (method_exists('RevSliderGlobals','instance')) {
+	$rs_f = RevSliderGlobals::instance()->get('RevSliderFunctions');
+} else {
+	$rs_f = new RevSliderFunctions();
+}
+
 
 $registered_p_c = ($rs_f->get_addition('selling') === true) ? __('registered license key', 'revslider') : __('registered purchase code', 'revslider');
-$registered_p_c_url = ($rs_f->get_addition('selling') === true) ? 'https://sliderrevolution.com/pricing/' : 'https://themepunch.com/faq/where-to-find-purchase-code/';
+$registered_p_c_url = ($rs_f->get_addition('selling') === true) ? 'https://account.sliderrevolution.com/portal/pricing/' : 'https://themepunch.com/faq/where-to-find-purchase-code/';
 ?>
 
 <!--OPTIMIZER DETAILS-->
@@ -62,7 +67,12 @@ $registered_p_c_url = ($rs_f->get_addition('selling') === true) ? 'https://slide
 						</div>
 						<div class="ale_i_title thumbnail_title"><?php _e('Insert Module as Pop Up Module','revslider');?></div><hr class="general_hr"><span class="linebreak"></span>
 						<label_a>Use Pop Up</label_a><input id="rs_popup_decide" type="checkbox" class="easyinit scblockinput" data-r="modal" data-showhide=".rs_modaldependencies_false" data-hideshow=".rs_modaldependencies_true" data-showhidedep="false">
-						
+						<div class="rs_modaldependencies_true">	
+							<div class="div25"></div>							
+							<div class="ale_i_title thumbnail_title"><?php _e('1 Time Per Session','revslider');?><input type="checkbox" data-rocker="foals"  class="easyinit scblockinput" data-r="popup.cookie.use"></div><hr class="general_hr"><span class="linebreak"></span>							
+							<row class="direktrow"><onefull><label_a><?php _e('Session (hours)','revslider');?></label_a><input data-r="popup.cookie.v" class="valueduekeyboard longinput scblockinput easyinit callEvent" data-allowed="" data-numeric="true" data-min="0" data-max="1000" type="text"></onefull></row>							
+							<div class="function_info_small"><?php _e('Relating on Pop Up after Time and Scroll Position ','revslider');?></div>
+						</div>
 						<div class="div25"></div>
 						<div class="ale_i_title thumbnail_title"><?php _e('Pop Up by Actions','revslider');?></div><hr class="general_hr"><span class="linebreak"></span>																						
 						<div class="function_info"><?php _e('Pop Up\'s can also be triggered by Layer Actions.<br>See more details in ','revslider');?><a href="https://www.themepunch.com/slider-revolution/lightbox-modal/" target:"_new"><?php _e('Pop Up / Modal Documentation','revslider');?></a></div>
@@ -103,7 +113,10 @@ $registered_p_c_url = ($rs_f->get_addition('selling') === true) ? 'https://slide
 								<div class="div25"></div>							
 								<div class="ale_i_title thumbnail_title"><?php _e('Pop Up by Events','revslider');?><input type="checkbox" data-rocker="foals"  class="easyinit scblockinput" data-r="popup.event.use"></div><hr class="general_hr"><span class="linebreak"></span>							
 								<row class="direktrow"><onefull><label_a><?php _e('Listen to','revslider');?></label_a><input data-r="popup.event.v" class="valueduekeyboard longinput scblockinput easyinit callEvent" data-evt="updateSRBSSVREVT" type="text"></onefull></row>							
-								<div class="function_info_small">i.e.: jQuery(document).trigger("<span id="srbs_scr_evt"></span>"")</div>
+								<div class="function_info_small">i.e.: jQuery(document).trigger("<span id="srbs_scr_evt"></span>")</div>
+								<div class="div25"></div>
+								<div class="ale_i_title thumbnail_title"><?php _e('Pop Up on URL Hash ','revslider');?><input type="checkbox" data-rocker="foals"  class="easyinit scblockinput" data-r="popup.hash.use"></div><hr class="general_hr"><span class="linebreak"></span>															
+								<div class="function_info"><?php _e('https://yourwebsite.com/yourpage/#<span id="srbs_scr_hash"></span>','revslider') ?></div>
 							</div>
 						</div>
 					</div>

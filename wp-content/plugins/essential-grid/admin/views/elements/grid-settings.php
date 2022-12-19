@@ -111,6 +111,14 @@ $all_metas = $eg_meta->get_all_meta();
 						--><span class="eg-tooltip-wrap" title="<?php _e('Disable Video Playback on Hover', EG_TEXTDOMAIN); ?>"><?php _e('Disable', EG_TEXTDOMAIN); ?></span>	
 
 						<div class="div13"></div>
+						<label for="videomuteinline" class="eg-tooltip-wrap" title="<?php _e('Mute / Unmute Video Inline', EG_TEXTDOMAIN); ?>"><?php _e('Mute Inline Video', EG_TEXTDOMAIN); ?></label><!--
+						--><input type="radio" name="videomuteinline" value="on" <?php checked($base->getVar($grid, array('params', 'videomuteinline'), 'on'), 'on'); ?>><!--
+						--><span class="eg-tooltip-wrap" title="<?php _e('Mute Video Inline', EG_TEXTDOMAIN); ?>"><?php _e('Enable', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
+						--><input type="radio"  name="videomuteinline" value="off" <?php checked($base->getVar($grid, array('params', 'videomuteinline'), 'on'), 'off'); ?>><!--
+						--><span class="eg-tooltip-wrap" title="<?php _e('Unmute Video inline', EG_TEXTDOMAIN); ?>"><?php _e('Disable', EG_TEXTDOMAIN); ?></span>	
+
+
+						<div class="div13"></div>
 						<label for="keeplayersovermedia" class="eg-tooltip-wrap" title="<?php _e('Keep the Layers over the Video', EG_TEXTDOMAIN); ?>"><?php _e('Keep Layers on Playback', EG_TEXTDOMAIN); ?></label><!--
 						--><input type="radio" name="keeplayersovermedia" value="on" <?php checked($base->getVar($grid, array('params', 'keeplayersovermedia'), 'off'), 'on'); ?>><!--
 						--><span class="eg-tooltip-wrap" title="<?php _e('Allow Video Playback on hover', EG_TEXTDOMAIN); ?>"><?php _e('Enable', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
@@ -654,11 +662,10 @@ $all_metas = $eg_meta->get_all_meta();
 										ob_end_clean();
 										
 										//2.3.7 display html of item skin preview
-                    $skins_html .= htmlspecialchars_decode($current_skin_html);
-										//2.3.7 replace placeholders with demo data
+                    					$skins_html .= htmlspecialchars_decode($current_skin_html);
 										$skins_html = str_replace(
-											array( '%favorites%' , '%author_name%' , '%likes_short%' , '%date%' , '%retweets%' , '%likes%' , '%views_short%' , '%dislikes_short%' , '%duration%' , '%num_comments%','Likes (Facebook,Twitter,YouTube,Vimeo,Instagram)','Likes Short (Facebook,Twitter,YouTube,Vimeo,Instagram)' , 'Date Modified', 'Views (flickr,YouTube, Vimeo)' , 'Views Short (flickr,YouTube, Vimeo)', 'Cat. List' , 'Excerpt'),
-											array( '314' , 'Author' , '1.2K' , '2020-06-28' , '35' , '123' , '54' , '13' , '9:32' , '12' , '231' , '1.2K' , '2020-06-28', '231' , '1.2K' , 'News, Journey, Company', 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.'),
+											array( '%favorites%' , '%eg-clients-icon%', '%eg-clients-icon-dark%', '%author_name%' , '%likes_short%' , '%date%' , '%retweets%' , '%likes%' , '%views_short%' , '%dislikes_short%' , '%duration%' , '%num_comments%','Likes (Facebook,Twitter,YouTube,Vimeo,Instagram)','Likes Short (Facebook,Twitter,YouTube,Vimeo,Instagram)' , 'Date Modified', 'Views (flickr,YouTube, Vimeo)' , 'Views Short (flickr,YouTube, Vimeo)', 'Cat. List' , 'Excerpt'),
+											array( '314' , EG_PLUGIN_URL . '/admin/assets/images/client.png' , EG_PLUGIN_URL . '/admin/assets/images/client_dark.png' , 'Author' , '1.2K' , '2020-06-28' , '35' , '123' , '54' , '13' , '9:32' , '12' , '231' , '1.2K' , '2020-06-28', '231' , '1.2K' , 'News, Journey, Company', 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.'),
 											$skins_html
 										);
 
@@ -1121,6 +1128,14 @@ $all_metas = $eg_meta->get_all_meta();
 							--><input type="radio" name="filter-logic" value="and" <?php checked($base->getVar($grid, array('params', 'filter-logic'), 'or'), 'and'); ?>> <span class="eg-tooltip-wrap" title="<?php _e('Shows all elements that meet ONE OR MORE of the selected filters', EG_TEXTDOMAIN); ?>"><?php _e('AND', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
 							--><input type="radio" name="filter-logic" value="or" <?php checked($base->getVar($grid, array('params', 'filter-logic'), 'or'), 'or'); ?>> <span  class="eg-tooltip-wrap" title="<?php _e('Shows all elements that meet ALL of the selected filters', EG_TEXTDOMAIN); ?>"><?php _e('OR', EG_TEXTDOMAIN); ?></span>
 						</div>
+						<div id="convert_mobile_filters">
+							<div class="div13"></div>
+							<label for="add-filters-by"><?php _e('Add Filters By', EG_TEXTDOMAIN); ?></label><!--
+							--><input type="radio" name="add-filters-by" value="default" <?php checked($base->getVar($grid, array('params', 'add-filters-by'), 'default'), 'default'); ?>><span class="eg-tooltip-wrap" title="<?php _e('Combine tags and categories', EG_TEXTDOMAIN); ?>"><?php _e('Default', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
+							--><input type="radio" name="add-filters-by" value="categories" <?php checked($base->getVar($grid, array('params', 'add-filters-by'), 'default'), 'categories'); ?>><span class="eg-tooltip-wrap" title="<?php _e('Only categories', EG_TEXTDOMAIN); ?>"><?php _e('Categories', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
+							--><input type="radio" name="add-filters-by" value="tags" <?php checked($base->getVar($grid, array('params', 'add-filters-by'), 'default'), 'tags'); ?>><span class="eg-tooltip-wrap" title="<?php _e('Only tags', EG_TEXTDOMAIN); ?>"><?php _e('Tags', EG_TEXTDOMAIN); ?></span>
+						</div>
+
 						<div class="eg-filter-start">
 							<div class="div13"></div>
 							<label for="filter-start" class="eg-tooltip-wrap" title="<?php _e('Grid starts with this filter(filters comma separated) active. Take slug from below or leave empty to disable.', EG_TEXTDOMAIN); ?>"><?php _e('Start with Filter', EG_TEXTDOMAIN); ?></label><!--
@@ -1141,7 +1156,7 @@ $all_metas = $eg_meta->get_all_meta();
 							--><input type="radio" name="convert-mobile-filters" value="on" <?php checked($base->getVar($grid, array('params', 'convert-mobile-filters'), 'off'), 'on'); ?>><span class="eg-tooltip-wrap" title="<?php _e('Choose to convert "Inline" filter layouts to "Dropdown" on mobile', EG_TEXTDOMAIN); ?>"><?php _e('On', EG_TEXTDOMAIN); ?></span><div class="space18"></div><!--
 							--><input type="radio" name="convert-mobile-filters" value="off" <?php checked($base->getVar($grid, array('params', 'convert-mobile-filters'), 'off'), 'off'); ?>><span class="eg-tooltip-wrap" title="<?php _e('Choose to convert "Inline" filter layouts to "Dropdown" on mobile', EG_TEXTDOMAIN); ?>"><?php _e('Off', EG_TEXTDOMAIN); ?></span>
 						</div>
-
+						
 						<!--<div style="float: left; width: 170px;">
 							<p><?php _e('Filter All Text', EG_TEXTDOMAIN); ?></p>
 							<p><?php _e('Layout Option', EG_TEXTDOMAIN); ?></p>

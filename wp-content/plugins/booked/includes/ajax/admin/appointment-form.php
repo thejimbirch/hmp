@@ -30,7 +30,7 @@ endif;
 
 	<?php if ($calendar_name): ?><p class="booked-calendar-name"><?php echo $calendar_name; ?></p><?php endif; ?>
 
-	<p class="name"><b><i class="booked-icon booked-icon-calendar"></i>&nbsp;&nbsp;<?php echo date_i18n($date_format, strtotime($date)); ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="booked-icon booked-icon-clock"></i>&nbsp;&nbsp;<?php echo $timeslotText; ?></b></p>
+	<p class="name"><b><i class="fa-solid fa-calendar-days"></i>&nbsp;&nbsp;<?php echo date_i18n($date_format, strtotime($date)); ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-clock"></i>&nbsp;&nbsp;<?php echo $timeslotText; ?></b></p>
 	<form action="" method="post" class="booked-form" id="newAppointmentForm"<?php if ($calendar_id): echo ' data-calendar-id="'.$calendar_id.'"'; endif; ?>>
 
 		<input type="hidden" name="date" value="<?php echo date_i18n('Y-m-j', strtotime($date)); ?>" />
@@ -126,4 +126,4 @@ endif;
 	</form>
 </div>
 
-<?php echo '<a href="#" class="close"><i class="booked-icon booked-icon-close"></i></a>';
+<?php echo '<a href="#" class="close"><i class="fa-solid fa-xmark"></i></a>';

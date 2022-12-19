@@ -335,7 +335,7 @@ class Essential_Grid_Search {
 
 				var inp = cont.find('input');
 				setTimeout(function() {
-					inp.focus();
+					inp.trigger('focus');
 				},450);
 
 				inp.on('keyup',function(e) {
@@ -364,13 +364,15 @@ class Essential_Grid_Search {
 							type:'post',
 							url: "<?php echo admin_url('admin-ajax.php'); ?>",
 							dataType:'json',
-							data:objData
-						}).success(function(result,status,arg3) {
-							if(typeof(result.data) !== 'undefined'){
-								jQuery('#esg_search_wrapper .esg_searchcontainer').append("<div class='esg_searchresult'>"+result.data+"</div>");
+							data:objData,
+							success:function(result,status,arg3) {
+								if(typeof(result.data) !== 'undefined'){
+									jQuery('#esg_search_wrapper .esg_searchcontainer').append("<div class='esg_searchresult'>"+result.data+"</div>");
+								}
+							},
+							error:function(arg1, arg2, arg3) {
+								jQuery('#esg_search_wrapper .esg_searchcontainer').html("<div class='esg_searchresult'><p class='futyi'>FAILURE: "+arg2+"   "+arg3+"</p></div>");
 							}
-						}).error(function(arg1, arg2, arg3) {
-							jQuery('#esg_search_wrapper .esg_searchcontainer').html("<div class='esg_searchresult'><p class='futyi'>FAILURE: "+arg2+"   "+arg3+"</p></div>");
 						});
 
 					}
@@ -384,7 +386,7 @@ class Essential_Grid_Search {
 				},function() {
 					punchgs.TweenLite.to(bgs,0.4,{rotation:0});
 				})
-				bgs.click(function() {
+				bgs.on('click',function() {
 					punchgs.TweenLite.to(sw,0.4,{x:0,y:0,scale:0.8,autoAlpha:0,ease:punchgs.Power3.easeOut,onComplete:function(){
 						sw.remove();
 						//kill everything from essential !!!!

@@ -2,8 +2,8 @@
 /**
  * Wishlist page template - Standard Layout
  *
- * @author  Your Inspiration Themes
- * @package YITH WooCommerce Wishlist
+ * @author YITH
+ * @package YITH\Wishlist\Templates\Wishlist\View
  * @version 3.0.11
  */
 
@@ -62,9 +62,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 			 */
 			global $product;
 
-			$product      = $item->get_product();
-			$availability = $product->get_availability();
-			$stock_status = isset( $availability['class'] ) ? $availability['class'] : false;
+			$product = $item->get_product();
 
 			if ( $product && $product->exists() ) :
 				?>
@@ -78,7 +76,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 					<div class="item-wrapper">
 						<div class="product-thumbnail">
 							<a href="<?php echo esc_url( get_permalink( apply_filters( 'woocommerce_in_cart_product', $item->get_product_id() ) ) ); ?>">
-								<?php echo $product->get_image(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<?php echo wp_kses_post( $product->get_image() ); ?>
 							</a>
 						</div>
 
@@ -89,7 +87,16 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 										<?php echo wp_kses_post( apply_filters( 'woocommerce_in_cartproduct_obj_title', $product->get_title(), $product ) ); ?>
 									</a>
 								</h3>
-								<?php do_action( 'yith_wcwl_table_after_product_name', $item ); ?>
+								<?php
+								/**
+								 * DO_ACTION: yith_wcwl_table_after_product_name
+								 *
+								 * Allows to render some content or fire some action after the product name in the wishlist table.
+								 *
+								 * @param YITH_WCWL_Wishlist_Item $item Wishlist item object
+								 */
+								do_action( 'yith_wcwl_table_after_product_name', $item );
+								?>
 							</div>
 
 							<?php if ( $show_variation || $show_dateadded || $show_price ) : ?>
@@ -149,11 +156,11 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 											<td class="value">
 												<?php
 												if ( $show_price ) {
-													echo $item->get_formatted_product_price(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													echo wp_kses_post( $item->get_formatted_product_price() );
 												}
 
 												if ( $show_price_variations ) {
-													echo $item->get_price_variation(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													echo wp_kses_post( $item->get_price_variation() );
 												}
 												?>
 											</td>
@@ -173,7 +180,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 										<td class="label">
 											<?php esc_html_e( 'Quantity:', 'yith-woocommerce-wishlist' ); ?>
 										</td>
-										<td class="value">
+										<td class="product-quantity">
 											<?php if ( ! $no_interactions && $wishlist->current_user_can( 'update_quantity' ) ) : ?>
 												<input type="number" min="1" step="1" name="items[<?php echo esc_attr( $item->get_product_id() ); ?>][quantity]" value="<?php echo esc_attr( $item->get_quantity() ); ?>"/>
 											<?php else : ?>
@@ -189,7 +196,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 											<?php esc_html_e( 'Stock:', 'yith-woocommerce-wishlist' ); ?>
 										</td>
 										<td class="value">
-											<?php echo 'out-of-stock' === $stock_status ? '<span class="wishlist-out-of-stock">' . esc_html__( 'Out of stock', 'yith-woocommerce-wishlist' ) . '</span>' : '<span class="wishlist-in-stock">' . esc_html__( 'In Stock', 'yith-woocommerce-wishlist' ) . '</span>'; ?>
+											<?php echo 'out-of-stock' === $item->get_stock_status() ? '<span class="wishlist-out-of-stock">' . esc_html__( 'Out of stock', 'yith-woocommerce-wishlist' ) . '</span>' : '<span class="wishlist-in-stock">' . esc_html__( 'In Stock', 'yith-woocommerce-wishlist' ) . '</span>'; ?>
 										</td>
 									</tr>
 								<?php endif ?>
@@ -197,7 +204,8 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 						<?php endif; ?>
 
 						<!-- Add to cart button -->
-						<?php if ( $show_add_to_cart && isset( $stock_status ) && 'out-of-stock' !== $stock_status ) : ?>
+						<?php $show_add_to_cart = apply_filters( 'yith_wcwl_table_product_show_add_to_cart', $show_add_to_cart, $item, $wishlist ); ?>
+						<?php if ( $show_add_to_cart && $item->is_purchasable() && 'out-of-stock' !== $item->get_stock_status() ) : ?>
 							<div class="product-add-to-cart">
 								<?php woocommerce_template_loop_add_to_cart( array( 'quantity' => $show_quantity ? $item->get_quantity() : 1 ) ); ?>
 							</div>
@@ -206,7 +214,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 						<!-- Change wishlist -->
 						<?php if ( $move_to_another_wishlist && $available_multi_wishlist && count( $users_wishlists ) > 1 ) : ?>
 							<div class="move-to-another-wishlist">
-								<?php if ( 'select' == $move_to_another_wishlist_type ) : ?>
+								<?php if ( 'select' === $move_to_another_wishlist_type ) : ?>
 									<select class="change-wishlist selectBox">
 										<option value=""><?php esc_html_e( 'Move', 'yith-woocommerce-wishlist' ); ?></option>
 										<?php
@@ -229,7 +237,18 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 									</select>
 								<?php else : ?>
 									<a href="#move_to_another_wishlist" class="move-to-another-wishlist-button" data-rel="prettyPhoto[move_to_another_wishlist]">
-										<?php echo esc_html( apply_filters( 'yith_wcwl_move_to_another_list_label', __( 'Move to another list &rsaquo;', 'yith-woocommerce-wishlist' ) ) ); ?>
+										<?php
+										/**
+										 * APPLY_FILTERS: yith_wcwl_move_to_another_list_label
+										 *
+										 * Filter the label to move the product to another wishlist.
+										 *
+										 * @param string $label Label
+										 *
+										 * @return string
+										 */
+										echo esc_html( apply_filters( 'yith_wcwl_move_to_another_list_label', __( 'Move to another list &rsaquo;', 'yith-woocommerce-wishlist' ) ) );
+										?>
 									</a>
 								<?php endif; ?>
 							</div>
@@ -237,7 +256,18 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 						<?php if ( $show_remove_product || $repeat_remove_button ) : ?>
 							<div class="product-remove">
-								<a href="<?php echo esc_url( add_query_arg( 'remove_from_wishlist', $item->get_product_id() ) ); ?>" class="remove_from_wishlist" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>"><i class="fa fa-trash"></i></a>
+								<?php
+								/**
+								 * APPLY_FILTERS: yith_wcwl_remove_product_wishlist_message_title
+								 *
+								 * Filter the title of the button to remove the product from the wishlist.
+								 *
+								 * @param string $title Button title
+								 *
+								 * @return string
+								 */
+								?>
+								<a href="<?php echo esc_url( $item->get_remove_url() ); ?>" class="remove_from_wishlist" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>"><i class="fa fa-trash"></i></a>
 							</div>
 						<?php endif; ?>
 					</div>
@@ -248,15 +278,18 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 	else :
 		?>
 		<p class="wishlist-empty">
-			<?php echo esc_html( apply_filters( 'yith_wcwl_no_product_to_remove_message', __( 'No products added to the wishlist', 'yith-woocommerce-wishlist' ) ) ); ?>
-		</p>
-		<?php
-	endif;
-
-	if ( ! empty( $page_links ) ) :
-		?>
-		<p class="pagination-row">
-			<?php echo $page_links; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php
+			/**
+			 * APPLY_FILTERS: yith_wcwl_no_product_to_remove_message
+			 *
+			 * Filter the message shown when there are no products in the wishlist.
+			 *
+			 * @param string $message Message
+			 *
+			 * @return string
+			 */
+			echo esc_html( apply_filters( 'yith_wcwl_no_product_to_remove_message', __( 'No products added to the wishlist', 'yith-woocommerce-wishlist' ) ) );
+			?>
 		</p>
 	<?php endif; ?>
 
@@ -264,6 +297,6 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 <?php if ( ! empty( $page_links ) ) : ?>
 	<nav class="wishlist-pagination">
-		<?php echo $page_links; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo wp_kses_post( $page_links ); ?>
 	</nav>
 <?php endif; ?>

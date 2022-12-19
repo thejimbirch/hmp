@@ -447,7 +447,7 @@ class Essential_Grid_Dialogs {
 		
 		$post_items = $item_ele->getPostElementsArray();
 		$metas = $m->get_all_meta();
-		$custom_meta = $m->get_all_meta(false);
+		//$custom_meta = $m->get_all_meta(false);
 		?>
 		<div id="meta-dialog-wrap" class="essential-dialog-wrap" title="<?php _e('Meta Key Picker', EG_TEXTDOMAIN); ?>"  style="display: none; padding:0px !important;">
 			<table>
@@ -469,7 +469,7 @@ class Essential_Grid_Dialogs {
 				}
 			}
 
-			if(!empty($custom_meta)){
+			/*if(!empty($custom_meta)){
 				foreach($custom_meta as $meta){
 					if($meta['type'] == 'link'){
 						echo '<tr class="eg-add-meta-to-textarea"><td>%egl-'.$meta['handle'].'%</td><td>'.$meta['name'].'</td></tr>';
@@ -477,7 +477,7 @@ class Essential_Grid_Dialogs {
 						echo '<tr class="eg-add-meta-to-textarea"><td>%eg-'.$meta['handle'].'%</td><td>'.$meta['name'].'</td></tr>';
 					}
 				}
-			}
+			}*/
 			
 			if(Essential_Grid_Woocommerce::is_woo_exists()){
 				$metas = Essential_Grid_Woocommerce::get_meta_array();
@@ -705,7 +705,15 @@ class Essential_Grid_Dialogs {
 								<option value="recent"><?php echo _e('Recent Post', EG_TEXTDOMAIN); ?></option>
 								<option value="related"><?php echo _e('Related Post', EG_TEXTDOMAIN); ?></option>
 							</select>
-
+							<div id="eg-related-post-based-details">
+								<div class="div13"></div>
+								<label for="postbasedtpyes" class="eg-tooltip-wrap tooltipstered"><?php echo _e('Related Post based on', EG_TEXTDOMAIN); ?></label><!--
+								--><select name="esg-sc-relatedbased" class="esg-sc-relatedbased">
+									<option value="both"><?php echo _e('Tags & Categories', EG_TEXTDOMAIN); ?></option>
+									<option value="tags"><?php echo _e('Tags', EG_TEXTDOMAIN); ?></option>									
+									<option value="categories"><?php echo _e('Categories', EG_TEXTDOMAIN); ?></option>									
+								</select>
+							</div>
 							<div class="esg-settings-exset-wrap">
 								<div class="div13"></div>
 								<label><?php _e('Maximum Entries', EG_TEXTDOMAIN); ?></label><!--
@@ -1215,14 +1223,14 @@ class Essential_Grid_Dialogs {
 				AdminEssentials.setInitSkinsJson(<?php echo $base->jsonEncodeForClientSide($advanced); ?>);
 				AdminEssentials.setInitStylingJson(<?php echo $base->jsonEncodeForClientSide($eg_elements); ?>);
 			
-				jQuery('.eg-image-add').click(function(e) {
+				jQuery('.eg-image-add').on('click',function(e) {
 					e.preventDefault();
 					AdminEssentials.upload_image_img(jQuery(this).data('setto'));
 					
 					return false; 
 				});
 				
-				jQuery('.eg-image-clear').click(function(e) {
+				jQuery('.eg-image-clear').on('click',function(e) {
 					e.preventDefault();
 					var setto = jQuery(this).data('setto');
 					jQuery('#'+setto).val('');
@@ -1231,14 +1239,14 @@ class Essential_Grid_Dialogs {
 					return false; 
 				});
 				
-				jQuery('#eg-custom-choose-from-image-library').click(function(e) {
+				jQuery('#eg-custom-choose-from-image-library').on('click',function(e) {
 					e.preventDefault();
 					AdminEssentials.upload_image_img(jQuery(this).data('setto'));
 
 					return false; 
 				});
 				
-				jQuery('#eg-custom-clear-from-image-library').click(function(e) {
+				jQuery('#eg-custom-clear-from-image-library').on('click',function(e) {
 					e.preventDefault();
 					
 					jQuery('#esg-custom-image-src').val('');

@@ -4,13 +4,13 @@
 Plugin Name: Booked
 Plugin URI: https://getbooked.io
 Description: Powerful appointment booking made simple.
-Version: 2.2.6
+Version: 2.4
 Author: Boxy Studio
 Author URI: https://boxystudio.com
 Text Domain: booked
 */
 
-define( 'BOOKED_VERSION', '2.2.6' );
+define( 'BOOKED_VERSION', '2.4' );
 define( 'BOOKED_WELCOME_SCREEN', get_option('booked_welcome_screen',true) );
 define( 'BOOKED_DEMO_MODE', get_option('booked_demo_mode',false) );
 define( 'BOOKED_PLUGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
@@ -19,10 +19,10 @@ define( 'BOOKED_STYLESHEET_DIR', get_stylesheet_directory() );
 define( 'BOOKED_PLUGIN_TEMPLATES_DIR', BOOKED_PLUGIN_DIR . '/templates/' );
 define( 'BOOKED_AJAX_INCLUDES_DIR', BOOKED_PLUGIN_DIR . '/includes/ajax/' );
 
-// Included Add-Ons - Installation/Activation
-define( 'BOOKED_WC_VERSION', '1.5.3' ); // Updated in 2.2.5
-define( 'BOOKED_FEA_VERSION', '1.1.16' ); // Updated in 2.2.4
-define( 'BOOKED_CF_VERSION', '1.1.6' ); // Updated in 2.2.4
+// FontAwesome Support
+require_once __DIR__ . '/vendor/fortawesome/wordpress-fontawesome/index.php';
+
+// Included Add-Ons
 require_once BOOKED_PLUGIN_DIR . '/includes/add-ons/init.php';
 
 // Booked Updates
@@ -341,7 +341,7 @@ if(!class_exists('booked_plugin')) {
 		public function booked_profile_tabs($default_tabs){
 
 			foreach($default_tabs as $slug => $name):
-				echo '<li'.($name['class'] ? ' class="'.$name['class'].'"' : '').'><a href="#'.$slug.'"><i class="booked-icon '.$name['booked-icon'].'"></i>'.$name['title'].'</a></li>';
+				echo '<li'.($name['class'] ? ' class="'.$name['class'].'"' : '').'><a href="#'.$slug.'"><i class="fa-solid fa-'.$name['fa-icon'].'"></i>'.$name['title'].'</a></li>';
 			endforeach;
 
 		}
@@ -558,7 +558,7 @@ if(!class_exists('booked_plugin')) {
 
 			foreach ( $submenu as $key => $value ) :
 				if ( $key == 'booked-appointments' ) :
-					if ( $pending ) { $submenu[$key][1][0] .= " <span style='position:relative; top:1px; margin:0 0 0 2px' class='update-plugins count-$pending' title='$pending'><span style='padding:0 3px 0 1px; display:inline-block; min-width:5px; text-align:center;' class='update-count'>" . $pending . "</span></span>"; }
+					if ( $pending ) { $submenu[$key][1][0] .= "&nbsp;<span class='awaiting-mod count-$pending' title='$pending'><span class='pending-count' aria-hidden='true'>$pending</span><span class='comments-in-moderation-text screen-reader-text'>$pending Pending Bookings</span></span>"; }
 					return;
 				endif;
 			endforeach;
@@ -576,8 +576,8 @@ if(!class_exists('booked_plugin')) {
 
 				if ($booked_booking_type == 'registered' && $booked_redirect_type == 'booked-profile' && !$booked_profile_page && $page != 'booked-welcome'):
 
-					echo '<div class="update-nag" style="line-height:28px; border-left-color:#DB5933;">';
-						echo sprintf(esc_html__( 'You need to create a page with the %s shortcode. It is required with your current settings.','booked' ),'<code>[booked-profile]</code>').'&nbsp;&nbsp;&nbsp;<a href="'.get_admin_url().'post-new.php?post_type=page" class="button-primary">'.esc_html__('Create a Page','booked').'</a>&nbsp;&nbsp;<a href="'.get_admin_url().'admin.php?page=booked-settings" class="button">'.esc_html__('Change Settings','booked').'</a>';
+					echo '<div class="notice notice-warning" style="line-height:37px; border-left-color:#DB5933;">';
+						echo sprintf(esc_html__( 'You need to create a page with the %s shortcode. It is required with your current settings.','booked' ),'<code>[booked-profile]</code>').'&nbsp;&nbsp;&nbsp;<a href="'.get_admin_url().'post-new.php?post_type=page">'.esc_html__('Create a Page','booked').'</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="'.get_admin_url().'admin.php?page=booked-settings">'.esc_html__('Change Settings','booked').'</a>';
 					echo '</div>';
 
 				endif;
@@ -594,8 +594,8 @@ if(!class_exists('booked_plugin')) {
 				$page = (isset($_GET['page']) ? $page = esc_html( $_GET['page'] ) : $page = false);
 				if ($pending && $page != 'booked-pending' && $page != 'booked-welcome'):
 
-					echo '<div class="update-nag" style="line-height:28px">';
-						echo sprintf( _n( 'There is %s pending appointment.', 'There are %s pending appointments.', $pending, 'booked' ), $pending ).'&nbsp;&nbsp;&nbsp;<a href="'.get_admin_url().'admin.php?page=booked-pending" class="button">'._n('View Pending Appointment','View Pending Appointments',$pending,'booked').'</a>';
+					echo '<div class="notice notice-warning" style="line-height:37px">';
+						echo sprintf( _n( 'There is %s pending appointment.', 'There are %s pending appointments.', $pending, 'booked' ), $pending ).'&nbsp;&nbsp;<a href="'.get_admin_url().'admin.php?page=booked-pending">'._n('View Pending Appointment','View Pending Appointments',$pending,'booked').' &rarr;</a>';
 					echo '</div>';
 
 				endif;
@@ -789,8 +789,8 @@ if(!class_exists('booked_plugin')) {
 				$booked_js_vars = array(
 					'ajax_url' => $ajax_url,
 					'ajaxRequests' => array(),
-					'i18n_slot' => esc_html__('Space Available','booked'),
-					'i18n_slots' => esc_html__('Spaces Available','booked'),
+					'i18n_slot' => esc_html( _x('Space Available', 'Single Space', 'booked') ),
+					'i18n_slots' => esc_html( _x('Spaces Available', 'Multiple Spaces', 'booked') ),
 					'i18n_add' => esc_html__('Add Timeslots','booked'),
 					'i18n_time_error' => esc_html__('The "End Time" needs to be later than the "Start Time".','booked'),
 					'i18n_bulk_add_confirm' => esc_html__('Are you sure you want to add those bulk time slots?','booked'),
@@ -835,12 +835,11 @@ if(!class_exists('booked_plugin')) {
 
 			if (in_array($current_page,$this->booked_screens) || $screen->id == 'dashboard'):
 				wp_enqueue_style('wp-color-picker');
-				wp_enqueue_style('booked-icons', BOOKED_PLUGIN_URL . '/assets/css/icons.css', array(), BOOKED_VERSION);
 				wp_enqueue_style('booked-tooltipster', 	BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/tooltipster.css', array(), '3.3.0');
 				wp_enqueue_style('booked-tooltipster-theme', 	BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/themes/tooltipster-light.css', array(), '3.3.0');
 				wp_enqueue_style('chosen', BOOKED_PLUGIN_URL . '/assets/js/chosen/chosen.min.css', array(), '1.2.0');
 				wp_enqueue_style('booked-animations', BOOKED_PLUGIN_URL . '/assets/css/animations.css', array(), BOOKED_VERSION);
-				wp_enqueue_style('booked-admin', BOOKED_PLUGIN_URL . '/assets/css/admin-styles.css', array(), BOOKED_VERSION);
+				wp_enqueue_style('booked-admin', BOOKED_PLUGIN_URL . '/dist/booked-admin.css', array(), BOOKED_VERSION);
 			endif;
 
 		}
@@ -900,37 +899,28 @@ if(!class_exists('booked_plugin')) {
 
 		public static function front_end_styles() {
 
-			wp_enqueue_style('booked-icons', BOOKED_PLUGIN_URL . '/assets/css/icons.css', array(), BOOKED_VERSION);
-			wp_enqueue_style('booked-tooltipster', 	BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/tooltipster.css', array(), '3.3.0');
-			wp_enqueue_style('booked-tooltipster-theme', 	BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/themes/tooltipster-light.css', array(), '3.3.0');
-			wp_enqueue_style('booked-animations', 	BOOKED_PLUGIN_URL . '/assets/css/animations.css', array(), BOOKED_VERSION);
-			wp_enqueue_style('booked-styles', 		BOOKED_PLUGIN_URL . '/assets/css/styles.css', array(), BOOKED_VERSION);
-			wp_enqueue_style('booked-responsive', 	BOOKED_PLUGIN_URL . '/assets/css/responsive.css', array(), BOOKED_VERSION);
+			wp_enqueue_style('booked-tooltipster', BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/tooltipster.css', array(), '3.3.0');
+			wp_enqueue_style('booked-tooltipster-theme', BOOKED_PLUGIN_URL . '/assets/js/tooltipster/css/themes/tooltipster-light.css', array(), '3.3.0');
+			wp_enqueue_style('booked-animations', BOOKED_PLUGIN_URL . '/assets/css/animations.css', array(), BOOKED_VERSION);
+			wp_enqueue_style('booked-css', BOOKED_PLUGIN_URL . '/dist/booked.css', array(), BOOKED_VERSION);
 
 			if ( defined('NECTAR_THEME_NAME') && NECTAR_THEME_NAME == 'salient' ):
 				wp_enqueue_style('booked-salient-overrides', BOOKED_PLUGIN_URL . '/assets/css/theme-specific/salient.css', array(), BOOKED_VERSION);
 			endif;
-
-		}
-
-		public static function front_end_color_theme() {
-
+			
 			if (!isset($_GET['print'])):
 				$colors_pattern_file = BOOKED_PLUGIN_DIR . '/assets/css/color-theme.php';
 				if ( !file_exists($colors_pattern_file) ) {
 					return;
 				}
-
+			
 				ob_start();
 				include(esc_attr($colors_pattern_file));
 				$booked_color_css = ob_get_clean();
-
 				$compressed_booked_color_css = booked_compress_css( $booked_color_css );
-
-				echo '<style type="text/css" media="screen">';
-					echo $compressed_booked_color_css;
-				echo '</style>';
-
+				
+				wp_add_inline_style( 'booked-css', $compressed_booked_color_css );
+			
 			endif;
 
 		}
@@ -965,7 +955,23 @@ if(class_exists('booked_plugin')) {
 	$booked_admin_caps->add_cap('manage_booked_options');
 
 	// Activation Hook
-	register_activation_hook(__FILE__, array('booked_plugin', 'activate'));
+	register_activation_hook( __FILE__, array('booked_plugin', 'activate'));
+	register_activation_hook( __FILE__, 'FortAwesome\FontAwesome_Loader::initialize' );
+	register_deactivation_hook( __FILE__, 'FortAwesome\FontAwesome_Loader::maybe_deactivate' );
+	
+	add_action(
+		'font_awesome_preferences',
+		function() {
+			fa()->register(
+				array(
+					'name' => 'Booked',
+					'version' => [
+						[ '6.1.2', '>=' ]
+					]
+				)
+			);
+		}
+	);
 
 	// Initiate the Booked Class
 	$booked_plugin = new booked_plugin();
@@ -992,7 +998,6 @@ if(class_exists('booked_plugin')) {
 
 		// Load the Front-End Styles and Color Settings
 		add_action('wp_enqueue_scripts', array('booked_plugin', 'front_end_styles'));
-		add_action('wp_enqueue_scripts', array('booked_plugin', 'front_end_color_theme'));
 
 	}
 }

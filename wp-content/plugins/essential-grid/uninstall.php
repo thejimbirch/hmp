@@ -14,9 +14,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 
-require_once plugin_dir_path( __FILE__ ) . '/public/essential-grid.class.php';
+//require_once plugin_dir_path( __FILE__ ) . '/public/essential-grid.class.php';
 
-Essential_Grid::uninstall_plugin(true);
+//Essential_Grid::uninstall_plugin(true);
 
 /*
 global $wpdb;
